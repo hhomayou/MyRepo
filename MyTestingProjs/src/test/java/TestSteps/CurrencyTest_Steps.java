@@ -18,7 +18,7 @@ public class CurrencyTest_Steps extends Setup {
 		BeforeClassMethod();
 	}
 
-	// Scenario 1 a
+	// Scenario 1
 	
 	@Then("^Test all rates$")
 	public void Test_all_rates() throws Throwable {
