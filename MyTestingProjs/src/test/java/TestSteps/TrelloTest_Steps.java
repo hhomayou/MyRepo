@@ -16,13 +16,21 @@ public class TrelloTest_Steps extends Setup {
 	public static final String emailTest = "hhomayounfar@qaconsultants.com";
 	public static final String passwordTest = "pswdpswd";
 	
+	WebElement login;
+	WebElement board;
+
+	// Scenario 1
 	
-	@Given("^A user open Trello page and login$")
-	public void a_user_open_Trello_page_and_Login() throws Throwable {
+	@Given("^A user wants to use Trello page$")
+	public void a_user_wants_to_use_Trello_page() throws Throwable {
 		beforeClassMethod("https://trello.com/login");
 		trelloElements = PageFactory.initElements(driver, TrelloElements.class); // Initial elements
-		WebElement login = trelloElements.getLogin();
+		login = trelloElements.getLogin();
 		wait.until(ExpectedConditions.elementToBeClickable(login));
+	}
+
+	@When("^The user enters login info$")
+	public void the_user_enters_login_info() throws Throwable {
 		// Page loaded, login now
 		if(!trelloElements.getEmail().equals(emailTest)) { // Email is not entered yet 
 			trelloElements.setEmail(emailTest);
@@ -30,24 +38,39 @@ public class TrelloTest_Steps extends Setup {
 			trelloElements.waitPassword(passwordTest);
 		}
 		login.click();
-		WebElement board = trelloElements.getBoard();
+	}
+
+	@Then("^The page Boards is loaded and it displays all the boards and teams$")
+	public void the_page_Boards_is_loaded_and_it_displays_all_the_boards_and_teams() throws Throwable {
+		board = trelloElements.getBoard();
 		wait.until(ExpectedConditions.elementToBeClickable(board));
-		// Logged into dash board				
+		// Logged into Boards page
 		System.out.println(trelloElements.getBoardTeamNames());
+		board.click();
 	}
 
-	@When("^Click on MyBoard$")
-	public void click_on_MyBoard() throws Throwable {
-		System.out.println("bbbbb");
+	// Scenario 2
+	
+	@Given("^The user is in the Boards page$")
+	public void the_user_is_in_the_Boards_page() throws Throwable {
+		// Nothing to do
+	}	
+	
+	@When("^The users clicks on MyBoard box$")
+	public void the_users_clicks_on_MyBoard_box() throws Throwable {
+		WebElement taskList = trelloElements.getTaskList();
+		wait.until(ExpectedConditions.elementToBeClickable(taskList));
 	}
 
-	@Then("^It prints success$")
-	public void it_prints_success() throws Throwable {
-		System.out.println("ccccc");
+	@Then("^The page MyBoard is loaded and it displays all the lists$")
+	public void the_page_MyBoard_is_loaded_and_it_displays_all_the_cards() throws Throwable {
+		// MyBoard page is loaded
+		System.out.println("============>" + trelloElements.getTaskListTitle());
 	}
 
 	@Then("^Test ends$")
 	public void test_ends() throws Throwable {
+		Thread.sleep(5000);
 		afterClassMethod();
 	}
 	

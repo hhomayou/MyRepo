@@ -26,6 +26,8 @@ public class TrelloElements {
 	WebElement password;
 	@FindBy(how = How.XPATH, xpath = "//a[@class='board-tile']")
 	WebElement board;
+	@FindBy(how = How.XPATH, xpath = "//div[@class='list-header-target js-editing-target']")
+	WebElement taskList;
 
 	public String getEmail() {
 		return email.getAttribute("value");
@@ -57,6 +59,16 @@ public class TrelloElements {
 	}
 	public String getBoardTeamNames() {
 		return "Board: " + board.findElement(By.xpath("//span[@class='board-tile-details-name']")).getText() +
-				"\nTeam:" + board.findElement(By.xpath("//span[@class='board-tile-details-sub-name']")).getText();
+				"\nTeam: " + board.findElement(By.xpath("//span[@class='board-tile-details-sub-name']")).getText();
+	}
+	
+	public WebElement getTaskList() {
+		return taskList;
+	}
+	public String getTaskListTitle() {
+		return taskList.findElement(By.xpath("//h2[@class='list-header-name-assist js-list-name-assist']")).getAttribute("value");
+	}
+	public void waitTaskList(String value) {
+		Setup.waitTillValue(taskList, value);
 	}
 }
