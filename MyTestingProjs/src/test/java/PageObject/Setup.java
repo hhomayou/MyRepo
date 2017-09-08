@@ -18,30 +18,26 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.support.PageFactory;
+import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
-import PageObject.Home_Page;
 import TestSteps.CurrencyExchange;
 
 public abstract class Setup {
-	static WebDriver driver;
-	public static PageObject.Home_Page homePage;
-	static List<CurrencyExchange> currencyExchanges;
+	protected static WebDriver driver;
 	protected static WebDriverWait wait;
 
-	//@BeforeClass
-	public static void BeforeClassMethod() throws IOException, ClassNotFoundException, SQLException {
+	public static WebDriver beforeClassMethod(String pageURI) throws IOException, ClassNotFoundException, SQLException {
 		System.setProperty("webdriver.chrome.driver", "Resources/chromedriver.exe");
 		driver = new ChromeDriver();
 		driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
-		driver.get(Home_Page.pageURI);
+		driver.get(pageURI);
 		wait = new WebDriverWait(driver,10);
-		System.out.println("Page: " + driver.getTitle());		
-		homePage = PageFactory.initElements(driver, Home_Page.class); // Init elements
+		System.out.println("Page: " + driver.getTitle());				
+		return driver;
 	}
 
-	//@AfterClass
 	public static void afterClassMethod() {
 		driver.quit();
 	}
@@ -58,7 +54,16 @@ public abstract class Setup {
 	    return (double) tmp / factor;
 	}
 
-	public static List<CurrencyExchange> ReadExcel(String fullFilePath) throws IOException {
+	public static void waitTillValue(WebElement webElement, String value) {
+		wait.until(ExpectedConditions.textToBePresentInElementValue(webElement, value));
+	}
+	public static void waitTillValueNot(WebElement webElement, String value) {
+		wait.until(ExpectedConditions.not(ExpectedConditions.textToBePresentInElementValue(webElement, value)));
+	}
+
+
+	// Reading external tables
+	public static List<CurrencyExchange> readExcel(String fullFilePath) throws IOException {
         String excelFilePath = fullFilePath;
         System.out.println("\nReading Excel file: " + fullFilePath);
         FileInputStream inputStream = new FileInputStream(new File(excelFilePath));         
@@ -98,7 +103,7 @@ public abstract class Setup {
         return currencyExchanges;
 	}
 
-	static public List<CurrencyExchange> ReadMySQL() throws SQLException, ClassNotFoundException {
+	static public List<CurrencyExchange> readMySQL() throws SQLException, ClassNotFoundException {
 		String myUrl = "jdbc:mysql://localhost/new_schema";
 		System.out.println("Reading MySQL host: " + myUrl);
 		Class.forName("org.gjt.mm.mysql.Driver");

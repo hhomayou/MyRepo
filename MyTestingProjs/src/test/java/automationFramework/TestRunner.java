@@ -7,8 +7,8 @@ import cucumber.api.junit.Cucumber;
 @RunWith(Cucumber.class)
 @CucumberOptions(
 	features =
-	//	"Feature/Trello.Feature"
-		"Feature/CurrencyTest.Feature"
+		"Feature/Trello.Feature"
+	//	"Feature/CurrencyTest.Feature"
 	,
 	
 	plugin = {"pretty", "html:target/cucumber"}
