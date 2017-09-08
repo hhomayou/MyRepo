@@ -56,6 +56,7 @@ public class TrelloElements {
 		return board;
 	}
 	public String getBoardTeamNames() {
-		return board.findElement(By.xpath("//span[@class='board-tile-details-name']")).getText();
+		return "Board: " + board.findElement(By.xpath("//span[@class='board-tile-details-name']")).getText() +
+				"\nTeam:" + board.findElement(By.xpath("//span[@class='board-tile-details-sub-name']")).getText();
 	}
 }

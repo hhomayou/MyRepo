@@ -33,7 +33,7 @@ public class TrelloTest_Steps extends Setup {
 		WebElement board = trelloElements.getBoard();
 		wait.until(ExpectedConditions.elementToBeClickable(board));
 		// Logged into dash board				
-		System.out.println("Board name and team names = " + trelloElements.getBoardTeamNames());
+		System.out.println(trelloElements.getBoardTeamNames());
 	}
 
 	@When("^Click on MyBoard$")
