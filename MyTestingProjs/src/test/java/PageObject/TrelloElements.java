@@ -1,11 +1,15 @@
 package PageObject;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.How;
+import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 public class TrelloElements {
@@ -26,8 +30,12 @@ public class TrelloElements {
 	WebElement password;
 	@FindBy(how = How.XPATH, xpath = "//a[@class='board-tile']")
 	WebElement board;
-	@FindBy(how = How.XPATH, xpath = "//div[@class='list-header-target js-editing-target']")
+	@FindBy(how = How.XPATH, xpath = "//div[@class='list-header js-list-header u-clearfix is-menu-shown']")
 	WebElement taskList;
+	@FindBy(how = How.XPATH, xpath = "//a[@class='list-card js-member-droppable ui-droppable']")
+	List<WebElement> cards;
+	@FindBy(how = How.XPATH, xpath = "//div[@class='window']")
+	WebElement card;
 
 	public String getEmail() {
 		return email.getAttribute("value");
@@ -65,10 +73,36 @@ public class TrelloElements {
 	public WebElement getTaskList() {
 		return taskList;
 	}
-	public String getTaskListTitle() {
-		return taskList.findElement(By.xpath("//h2[@class='list-header-name-assist js-list-name-assist']")).getAttribute("value");
-	}
 	public void waitTaskList(String value) {
 		Setup.waitTillValue(taskList, value);
+	}
+	public String getTaskListTitle() {
+		return taskList.findElement(By.xpath("//h2[@class='list-header-name-assist js-list-name-assist']")).getAttribute("textContent");
+	}
+	public String getTaskListCardTot() {
+		return taskList.findElement(By.xpath("//p[@class='list-header-num-cards hide js-num-cards']")).getAttribute("innerText");
+	}
+
+	public List<WebElement> getCards() {
+		return taskList.findElements(By.xpath("//a[@class='list-card js-member-droppable ui-droppable']"));
+	}
+
+	public WebElement getCard() {
+		return card;
+	}
+	public WebElement waitCard() {
+		return card;
+	}
+	public void closeCard() {
+		WebElement close = card.findElement(By.xpath(".//a[@class='icon-lg icon-close dialog-close-button js-close-window']"));
+		wait.until(ExpectedConditions.elementToBeClickable(close));
+		close.click();
+	}
+	
+	public List<String> getItems(){
+		List<String> items = new ArrayList<String>();
+		for(WebElement item :card.findElements(By.xpath(".//div[@class='checklist-item']")))
+				items.add(item.getAttribute("innerText"));
+		return items;
 	}
 }
