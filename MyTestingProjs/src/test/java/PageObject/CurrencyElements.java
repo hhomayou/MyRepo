@@ -72,8 +72,7 @@ public class CurrencyElements {
 	public void setCurrencyHaveUnit(WebElement unit) throws InterruptedException { // Click to be set (Unit menu should
 																					// be clicked)
 		Thread.sleep(500);
-		(new WebDriverWait(driver, 10)).until(ExpectedConditions.elementToBeClickable(unit));
-		unit.click();
+		wait.until(ExpectedConditions.elementToBeClickable(unit)).click();
 	}
 	public void waitCurrencyHaveUnit(String value) {
 		Setup.waitTillValue(currencyHaveUnitsRO, value);

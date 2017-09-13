@@ -22,7 +22,8 @@ public class TrelloTest_Steps extends Setup {
 	public static final String passwordTest = "pswdpswd";
 	
 	WebElement login, card, team;
-	List<WebElement> boards;
+	List<WebElement> teams;
+	String boardName;
 
 	// Login
 	
@@ -46,8 +47,8 @@ public class TrelloTest_Steps extends Setup {
 		// Wait till all team/boards are displayed		
 		wait.until(new ExpectedCondition<Boolean>() {
 			public Boolean apply(WebDriver driver) {
-				boards = trelloElements.getBoards();
-				return boards.size() > 1;
+				teams = trelloElements.getTeams();
+				return teams.size() > 1;
 			}
 		});			
 		// Logged into Boards page
@@ -56,7 +57,7 @@ public class TrelloTest_Steps extends Setup {
 
 	@Then("^List of teams and boards is displayed in the main page$")
 	public void list_of_teams_and_boards_is_displayed_in_the_main_page() throws Throwable {
-		trelloElements.displayBoardTeamNames();		
+		trelloElements.listTeams();		
 	}	
 
 	// Display a board
@@ -68,7 +69,7 @@ public class TrelloTest_Steps extends Setup {
 	
 	@When("^User clicks on MyBoard box$")
 	public void user_clicks_on_MyBoard_box() throws Throwable {
-		trelloElements.clickTeamBoard("MyTeam");			
+		trelloElements.clickTeamBoards("MyTeam");			
 		WebElement taskList = trelloElements.getTaskList();
 		wait.until(ExpectedConditions.elementToBeClickable(taskList));
 	}
@@ -171,24 +172,57 @@ public class TrelloTest_Steps extends Setup {
 	
 	@When("^User clicks on create new board box$")
 	public void user_clicks_on_create_new_board_box() throws Throwable {
-		trelloElements.clickTeamBoard("MyTeam");			
-	}
-
-	@Then("^Create Board popup appears$")
-	public void create_Board_popup_appears() throws Throwable {
+		//trelloElements.clickNewBoard("MyTeam");			
 	}
 
 	@Then("^User enters Title and selects first Team$")
 	public void user_enters_Title_and_selects_first_Team() throws Throwable {
+		//trelloElements.setBoard("Board1");
+		//trelloElements.clickCreateBoard();
+		trelloElements.clickTeamBoard("Board1"); // ggg
+		Thread.sleep(1000); // gggg
 	}
 
 	@Then("^The new board is created$")
 	public void the_new_board_is_created() throws Throwable {
+		System.out.println("Board [" + trelloElements.getBoardName() + "] added successfully");
 	}
 
-	// Scenario Test ends
+	// Delete the board
+	@Given("^User is in the board page$")
+	public void user_is_in_the_board_page() throws Throwable {
+		boardName = trelloElements.getBoardName();
+	}
+
+	@When("^User clicks on more link$")
+	public void user_clicks_on_more_link() throws Throwable {
+		trelloElements.clickMore();
+	}
+
+	@Then("^User clicks Close Board link and Close button$")
+	public void user_clicks_close_board_link_and_close_button() throws Throwable {
+		trelloElements.clickCloseBoard();
+	}
+
+	@Then("^Page displays the board is closed$")
+	public void page_displays_the_board_is_closed() throws Throwable {
+		System.out.println("Done: " + trelloElements.getBoardClosedMessage());
+	}	
+
+    @Then("^User clicks on Permanently Delete Board link and delete button$")
+	public void user_clicks_on_permanently_delete_board_link_and_delete_button() throws Throwable {
+    	trelloElements.clickDeleteBoard();
+	}	
+    @Then("^Board is deleted and page displays Board not found$")
+	public void board_is_deleted_and_page_displays_Board_not_found() throws Throwable {
+    	trelloElements.getBoardDeletedMessage();
+		System.out.println("Board [" + boardName + "] was deleted successfully");
+	}
+	
+	// Test ends
 	
 	@Given("^The test is over$")
+
 	public void the_test_is_over() throws Throwable {
 		// Do nothing
 	}
@@ -200,7 +234,7 @@ public class TrelloTest_Steps extends Setup {
 	
 	@Then("^The page closes$")
 	public void the_page_closes() throws Throwable {
-		Thread.sleep(3000);
+		Thread.sleep(2000);
 		afterClassMethod();
 	}
 	

@@ -9,6 +9,7 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.How;
+import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
@@ -29,7 +30,7 @@ public class TrelloElements {
 	@FindBy(how = How.XPATH, xpath = "//input[@type='password']")
 	WebElement password;
 	@FindBy(how = How.XPATH, xpath = "//div[@class='boards-page-board-section mod-no-sidebar']")
-	List<WebElement> boards;
+	List<WebElement> teams;
 	@FindBy(how = How.XPATH, xpath = "//div[@class='list-header js-list-header u-clearfix is-menu-shown']")
 	WebElement taskList;
 	@FindBy(how = How.XPATH, xpath = "//a[@class='list-card js-member-droppable ui-droppable']")
@@ -41,9 +42,9 @@ public class TrelloElements {
 	@FindBy(how = How.XPATH, xpath = "//div[@class='boards-page-board-section u-clearfix']")
 	WebElement newTeamParent;
 	@FindBy(how = How.XPATH, xpath = "//input[@id='org-display-name']")	
-	WebElement teamName;
+	WebElement newTeamName;
 	@FindBy(how = How.XPATH, xpath = "//textarea[@id='org-desc']")	
-	WebElement teamDescription;
+	WebElement newTeamDescription;
 	@FindBy(how = How.XPATH, xpath = "//input[@class='primary wide js-save']")	
 	WebElement createTeam;	
 	@FindBy(how = How.XPATH, xpath = "//h1[@class='u-inline']")
@@ -54,7 +55,29 @@ public class TrelloElements {
 	WebElement deleteTeam;
 	@FindBy(how = How.XPATH, xpath = "//input[@value='Delete Forever']")
 	WebElement deleteTeamConfirm;
-	
+	@FindBy(how = How.XPATH, xpath = "//input[@id='boardNewTitle']")
+	WebElement newBoardTitle;
+	@FindBy(how = How.XPATH, xpath = "//select[@name='org-id']")
+	List<WebElement> newBoardTeams;
+	@FindBy(how = How.XPATH, xpath = "//input[@value='Create']")
+	WebElement createBoard;
+	@FindBy(how = How.XPATH, xpath = "//div[@class='board-header u-clearfix js-board-header']")
+	WebElement board;
+	@FindBy(how = How.XPATH, xpath = "//li[a[contains(text(),'More')]]")
+	WebElement more;
+	@FindBy(how = How.XPATH, xpath = "//a[@class='board-menu-navigation-item-link js-close-board']")
+	WebElement closeBoardLink;
+	@FindBy(how = How.XPATH, xpath = "//input[@value='Close']")
+	WebElement closeBoardButton;
+	@FindBy(how = How.XPATH, xpath = "//div[@class='big-message quiet']")
+	WebElement boardClosedMessage;
+	@FindBy(how = How.XPATH, xpath = "//a[@class='quiet js-delete']")
+	WebElement deleteBoardLink;
+	@FindBy(how = How.XPATH, xpath = "//input[@value='Delete']")
+	WebElement deleteBoardButton;
+	@FindBy(how = How.XPATH, xpath = "//div[@class='big-message quiet']")
+	WebElement boardDeletedMessage;
+		
 	
 	public String getEmail() {
 		return email.getAttribute("value");
@@ -76,32 +99,88 @@ public class TrelloElements {
 		Setup.waitTillValue(password, value);
 	}
 	
-	
 	public WebElement getLogin() {
 		return login;
 	}
 	
-	public List<WebElement> getBoards() {
-		return boards;
-	}	
-	public void displayBoardTeamNames() {
-		System.out.println("List of the boards/teams:");
-		for(WebElement board : boards) {
-			System.out.print("Team: [" + board.findElement(By.xpath(".//h3[@class='boards-page-board-section-header-name']")).getAttribute("innerText") + "]");
-			System.out.println(", Board: [" + board.findElement(By.xpath(".//span[@class='board-tile-details-name']")).getAttribute("innerText") + "]");
+	// Teams and boards [
+	
+	//  Teams and boards [
+	public List<WebElement> getTeams() {
+		return teams;
+	}
+	public WebElement getTeam(String teamName) throws Exception { // Get team from the list of teams
+		for(WebElement team : teams)
+			if(team.findElement(By.xpath(".//h3[@class='boards-page-board-section-header-name']")).getAttribute("innerText").equals(teamName))
+				return team;
+		throw new Exception("Team [" + teamName + "] was not found !");
+	}
+	public void listTeams() {
+		System.out.println("List of the teams:");
+		for(WebElement team : teams) {
+			System.out.print("Team: [" + team.findElement(By.xpath(".//h3[@class='boards-page-board-section-header-name']")).getAttribute("innerText") + "]");
+			System.out.println(", Board: [" + team.findElement(By.xpath(".//span[@class='board-tile-details-name']")).getAttribute("innerText") + "]");
 		}
 	}
-
-	public void clickTeamBoard(String teamName) throws Exception {
-		for(WebElement board : this.boards)
-			if(board.findElement(By.xpath(".//h3[@class='boards-page-board-section-header-name']")).getAttribute("innerText").equals(teamName)) {
-				board.findElement(By.xpath(".//a[@class='boards-page-board-section-header-options-item dark-hover']")).click();
+	public void clickTeamBoards(String teamName) throws Exception { // Clicks on team 'Boards' button
+		for(WebElement team : teams)
+			if(team.findElement(By.xpath(".//h3[@class='boards-page-board-section-header-name']")).getAttribute("innerText").equals(teamName)) {
+				team.findElement(By.xpath(".//a[@class='boards-page-board-section-header-options-item dark-hover']")).click();
 				return;
 			}
 		throw new Exception("Team [" + teamName + "] was not found !");
 	}
-
-	
+	public void clickTeamBoard(String boardName) throws Exception { // Clicks on team {boardName}
+		for(WebElement team: teams)
+			if(team.findElement(By.xpath(".//span[@class='board-tile-details-name']")).getAttribute("innerText").equals(boardName)) {
+				wait.until(ExpectedConditions.elementToBeClickable(team.findElement(By.xpath(".//span[@class='board-tile-details is-badged']")))).click();
+				return;
+			}
+		throw new Exception("Board [" + boardName + "] was not found !");
+	}
+	public void clickNewBoard(String teamName) throws Exception { // Click on 'Create New Board' of teamName 
+		wait.until(ExpectedConditions.elementToBeClickable(getTeam(teamName).findElement(By.xpath(".//a[@class='board-tile mod-add']")))).click();
+	}
+	public void setBoard(String title) throws Exception { // Set name for new board in Create Board box
+		newBoardTitle.sendKeys(Keys.chord(Keys.CONTROL, "a"), title);			
+	}
+	public String getBoardName() throws InterruptedException { // Get current board name
+		return board.findElement(By.xpath(".//span[@class='board-header-btn-text']")).getAttribute("innerText");
+	}
+	public void clickCreateBoard() throws InterruptedException {
+		wait.until(ExpectedConditions.elementToBeClickable(createBoard));
+		Thread.sleep(500);		
+		createBoard.click();
+	}
+	public void clickMore() { // Click on ... more link in board page
+		wait.until(ExpectedConditions.elementToBeClickable(more)).click();
+	}
+	public void clickCloseBoard() throws InterruptedException {
+		wait.until(ExpectedConditions.elementToBeClickable(closeBoardLink)).click();
+		Thread.sleep(1000);
+		wait.until(ExpectedConditions.elementToBeClickable(closeBoardButton)).click();
+	}
+	public String getBoardClosedMessage() throws InterruptedException {
+		WebElement closedMessage = boardClosedMessage.findElement(By.xpath(".//h1"));
+		wait.until(ExpectedConditions.visibilityOf(closedMessage));		
+		return closedMessage.getAttribute("innerText");
+	}
+	public void clickDeleteBoard() throws InterruptedException {
+		wait.until(ExpectedConditions.elementToBeClickable(deleteBoardLink)).click();
+		Thread.sleep(1000);
+		wait.until(ExpectedConditions.elementToBeClickable(deleteBoardButton)).click();
+	}
+	public void getBoardDeletedMessage() throws InterruptedException {
+		Thread.sleep(1000);	
+		WebElement deletedMessage = boardDeletedMessage.findElement(By.xpath(".//h1"));
+		wait.until(new ExpectedCondition<Boolean>() {
+			public Boolean apply(WebDriver driver) {
+				return deletedMessage.getAttribute("innerText").equals("Board not found.");
+			}
+		});
+	}
+	//  Teams and boards ]
+		
 	public WebElement getTaskList() {
 		return taskList;
 	}
@@ -149,22 +228,19 @@ public class TrelloElements {
 		wait.until(ExpectedConditions.elementToBeClickable(newTeam));
 		newTeam.click();
 	}
-	
-	public String getTeamName() {
-		return teamName.getAttribute("value");
-	}
+
 	public void waitTeamName(String teamName) {
-		Setup.waitTillValue(this.teamName, teamName);
+		Setup.waitTillValue(newTeamName, teamName);
 	}
 	public void setTeamName(String teamName) {
-		this.teamName.sendKeys(Keys.chord(Keys.CONTROL, "a"), teamName);
+		newTeamName.sendKeys(Keys.chord(Keys.CONTROL, "a"), teamName);
 	}
 
 	public String getTeamDescription() {
-		return teamDescription.getAttribute("value");
+		return newTeamDescription.getAttribute("value");
 	}
 	public void setTeamDescription(String teamDescription) {
-		this.teamDescription.sendKeys(Keys.chord(Keys.CONTROL, "a"), teamDescription);
+		newTeamDescription.sendKeys(Keys.chord(Keys.CONTROL, "a"), teamDescription);
 	}
 	
 	public void clickCreateTeam() {
@@ -189,5 +265,4 @@ public class TrelloElements {
 		Thread.sleep(500);
 		deleteTeamConfirm.click();
 	}
-
 }

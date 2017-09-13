@@ -75,27 +75,27 @@ public class CurrencyTest_Steps extends Setup {
 		currencyHaveUnitsParentHave.click(); // Open menu unit-have
 		currencyElements.waitNotCurrencyWantAmount(currencyWantAmountOld); // wait till amount-want is updated
 		//
-			String currencyHaveUnitOld = currencyElements.getCurrencyHaveUnit();
-			currencyWantAmountOld = currencyElements.getCurrencyWantAmount();
-			WebElement unitHave = currencyElements.findCurrencyHaveUnit(currencyExchange.getUnitHave());
-			currencyElements.setCurrencyHaveUnit(unitHave); // Set unit have
-			if (!currencyHaveUnitOld.equals(currencyElements.getCurrencyHaveUnit()))
-				currencyElements.waitNotCurrencyWantAmount(currencyWantAmountOld); // wait till amount-want is updated
-			//
-			String currencyWantUnitOld = currencyElements.getCurrencyWantUnit();
-			currencyWantAmountOld = currencyElements.getCurrencyWantAmount();
-			currencyElements.waitCurrencyHaveUnitsParents();
-			//
-			currencyElements.getCurrencyHaveUnitsParents().get(1).click(); // Open menu Unit want
-			WebElement unitWant = currencyElements.findCurrencyHaveUnit(currencyExchange.getUnitWant());
-			currencyElements.setCurrencyHaveUnit(unitWant); // Set unit-want
-			if (!currencyWantUnitOld.equals(currencyElements.getCurrencyWantUnit()))
-				currencyElements.waitNotCurrencyWantAmount(currencyWantAmountOld); // wait till amount-want is updated
-			System.out.print("Testing: " + currencyExchange.getCurrencyHave() + " " + currencyExchange.getUnitHave()
-					+ " == " + currencyExchange.getCurrencyWant() + " " + currencyExchange.getUnitWant());
-			if (currencyExchange.getCurrencyWant() - currencyElements.getCurrencyWantAmount() > 1.5)
-				throw new PendingException("currencyWant[" + currencyExchange.getCurrencyWant() + "] is not " + currencyElements.getCurrencyWantAmount());
-			System.out.println(" Ok");
+		String currencyHaveUnitOld = currencyElements.getCurrencyHaveUnit();
+		currencyWantAmountOld = currencyElements.getCurrencyWantAmount();
+		WebElement unitHave = currencyElements.findCurrencyHaveUnit(currencyExchange.getUnitHave());
+		currencyElements.setCurrencyHaveUnit(unitHave); // Set unit have
+		if (!currencyHaveUnitOld.equals(currencyElements.getCurrencyHaveUnit()))
+			currencyElements.waitNotCurrencyWantAmount(currencyWantAmountOld); // wait till amount-want is updated
+		//
+		String currencyWantUnitOld = currencyElements.getCurrencyWantUnit();
+		currencyWantAmountOld = currencyElements.getCurrencyWantAmount();
+		currencyElements.waitCurrencyHaveUnitsParents();
+		//
+		currencyElements.getCurrencyHaveUnitsParents().get(1).click(); // Open menu Unit want
+		WebElement unitWant = currencyElements.findCurrencyHaveUnit(currencyExchange.getUnitWant());
+		currencyElements.setCurrencyHaveUnit(unitWant); // Set unit-want
+		if (!currencyWantUnitOld.equals(currencyElements.getCurrencyWantUnit()))
+			currencyElements.waitNotCurrencyWantAmount(currencyWantAmountOld); // wait till amount-want is updated
+		System.out.print("Testing: " + currencyExchange.getCurrencyHave() + " " + currencyExchange.getUnitHave()
+				+ " == " + currencyExchange.getCurrencyWant() + " " + currencyExchange.getUnitWant());
+		if (currencyExchange.getCurrencyWant() - currencyElements.getCurrencyWantAmount() > 1.5)
+			throw new PendingException("currencyWant[" + currencyExchange.getCurrencyWant() + "] is not " + currencyElements.getCurrencyWantAmount());
+		System.out.println(" Ok");
 	}
 
 	@Then("^End test$")
