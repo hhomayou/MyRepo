@@ -31,9 +31,9 @@ public abstract class Setup {
 	public static WebDriver beforeClassMethod(String pageURI) throws IOException, ClassNotFoundException, SQLException {
 		System.setProperty("webdriver.chrome.driver", "Resources/chromedriver.exe");
 		driver = new ChromeDriver();
-		driver.manage().timeouts().implicitlyWait(5, TimeUnit.SECONDS);
+		driver.manage().timeouts().implicitlyWait(3, TimeUnit.SECONDS);
 		driver.get(pageURI);
-		wait = new WebDriverWait(driver,5);
+		wait = new WebDriverWait(driver,3);
 		System.out.println("Page: " + driver.getTitle());				
 		return driver;
 	}

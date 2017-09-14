@@ -1,5 +1,5 @@
 #Author: hhomayounfar@qaconsultants.com
-Feature: Trello Team functions 
+Feature: Trello Board  
 
   Scenario: Login to Trello
     Given User opens Trello login page
@@ -10,15 +10,15 @@ Feature: Trello Team functions
     Given User is in the main page
     When User clicks on create new board box
     Then User enters Title and selects first Team
-    Then The new board is created
+    And The new board is created
 
   Scenario: Delete the board
     Given User is in the board page
     When User clicks on more link
     Then User clicks Close Board link and Close button
-    Then Page displays the board is closed 
-    Then User clicks on Permanently Delete Board link and delete button
-    Then Board is deleted and page displays Board not found
+    And Page displays the board is closed 
+    And User clicks on Permanently Delete Board link and delete button
+    And Board is deleted and page displays Board not found
 
   Scenario: Test ends
     Given The test is over

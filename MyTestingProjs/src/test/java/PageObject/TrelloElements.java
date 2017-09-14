@@ -5,24 +5,18 @@ import java.util.List;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
-import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.How;
-import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import cucumber.api.PendingException;
+
 public class TrelloElements {
 
-	final WebDriver driver;
-	WebDriverWait wait;
+	WebDriverWait wait = Setup.wait;
 
-	public TrelloElements(WebDriver driver) {
-		this.driver = driver;
-		wait = new WebDriverWait(driver, 10);
-	}
-	
 	@FindBy(how = How.XPATH, xpath = "//input[@id='login']")
 	WebElement login;
 	@FindBy(how = How.XPATH, xpath = "//input[@type='email']")
@@ -77,7 +71,16 @@ public class TrelloElements {
 	WebElement deleteBoardButton;
 	@FindBy(how = How.XPATH, xpath = "//div[@class='big-message quiet']")
 	WebElement boardDeletedMessage;
-		
+	@FindBy(how = How.XPATH, xpath = "//li[@class='boards-page-board-section-list-item' and .//span[@title='MyBoard']]")
+	WebElement myBoard;	
+	@FindBy(how = How.XPATH, xpath = "//a[@class='button-link js-add-checklist-menu']")
+	WebElement checklistButton;
+	@FindBy(how = How.XPATH, xpath = "//input[@id='id-checklist']")
+	WebElement newChecklistTitle;
+	@FindBy(how = How.XPATH, xpath = "//input[@class='primary wide confirm js-add-checklist']") //"//input[@value='Add']")
+	WebElement addChecklist;
+	@FindBy(how = How.XPATH, xpath = "//div[@class='checklist']")
+	List<WebElement> checklists;
 	
 	public String getEmail() {
 		return email.getAttribute("value");
@@ -102,10 +105,11 @@ public class TrelloElements {
 	public WebElement getLogin() {
 		return login;
 	}
+	public void waitLoginDone() {
+		wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//span[@title='MyBoard']"))); // Wait till next page is loaded		
+	}
 	
-	// Teams and boards [
-	
-	//  Teams and boards [
+	// Boards [
 	public List<WebElement> getTeams() {
 		return teams;
 	}
@@ -122,21 +126,9 @@ public class TrelloElements {
 			System.out.println(", Board: [" + team.findElement(By.xpath(".//span[@class='board-tile-details-name']")).getAttribute("innerText") + "]");
 		}
 	}
-	public void clickTeamBoards(String teamName) throws Exception { // Clicks on team 'Boards' button
-		for(WebElement team : teams)
-			if(team.findElement(By.xpath(".//h3[@class='boards-page-board-section-header-name']")).getAttribute("innerText").equals(teamName)) {
-				team.findElement(By.xpath(".//a[@class='boards-page-board-section-header-options-item dark-hover']")).click();
-				return;
-			}
-		throw new Exception("Team [" + teamName + "] was not found !");
-	}
-	public void clickTeamBoard(String boardName) throws Exception { // Clicks on team {boardName}
-		for(WebElement team: teams)
-			if(team.findElement(By.xpath(".//span[@class='board-tile-details-name']")).getAttribute("innerText").equals(boardName)) {
-				wait.until(ExpectedConditions.elementToBeClickable(team.findElement(By.xpath(".//span[@class='board-tile-details is-badged']")))).click();
-				return;
-			}
-		throw new Exception("Board [" + boardName + "] was not found !");
+	public void clickMyBoard() throws Exception {
+		wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//li[@class='boards-page-board-section-list-item']"))); // Wait till next page is loaded				
+		wait.until(ExpectedConditions.elementToBeClickable(myBoard)).click();		
 	}
 	public void clickNewBoard(String teamName) throws Exception { // Click on 'Create New Board' of teamName 
 		wait.until(ExpectedConditions.elementToBeClickable(getTeam(teamName).findElement(By.xpath(".//a[@class='board-tile mod-add']")))).click();
@@ -145,6 +137,7 @@ public class TrelloElements {
 		newBoardTitle.sendKeys(Keys.chord(Keys.CONTROL, "a"), title);			
 	}
 	public String getBoardName() throws InterruptedException { // Get current board name
+		wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//span[@class='board-header-btn-text']"))); // Wait till page is loaded
 		return board.findElement(By.xpath(".//span[@class='board-header-btn-text']")).getAttribute("innerText");
 	}
 	public void clickCreateBoard() throws InterruptedException {
@@ -167,26 +160,14 @@ public class TrelloElements {
 	}
 	public void clickDeleteBoard() throws InterruptedException {
 		wait.until(ExpectedConditions.elementToBeClickable(deleteBoardLink)).click();
-		Thread.sleep(1000);
+		wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//input[@value='Delete']")));
 		wait.until(ExpectedConditions.elementToBeClickable(deleteBoardButton)).click();
 	}
-	public void getBoardDeletedMessage() throws InterruptedException {
-		Thread.sleep(1000);	
-		WebElement deletedMessage = boardDeletedMessage.findElement(By.xpath(".//h1"));
-		wait.until(new ExpectedCondition<Boolean>() {
-			public Boolean apply(WebDriver driver) {
-				return deletedMessage.getAttribute("innerText").equals("Board not found.");
-			}
-		});
+	public String getBoardDeletedMessage() throws InterruptedException {
+		return boardDeletedMessage.findElement(By.xpath(".//h1")).getAttribute("innerText");
 	}
-	//  Teams and boards ]
+	// Boards ]
 		
-	public WebElement getTaskList() {
-		return taskList;
-	}
-	public void waitTaskList(String value) {
-		Setup.waitTillValue(taskList, value);
-	}
 	public String getTaskListTitle() {
 		return taskList.findElement(By.xpath("//h2[@class='list-header-name-assist js-list-name-assist']")).getAttribute("textContent");
 	}
@@ -197,29 +178,42 @@ public class TrelloElements {
 	public List<WebElement> getCards() {
 		return taskList.findElements(By.xpath("//a[@class='list-card js-member-droppable ui-droppable']"));
 	}
-
 	public WebElement getCard() {
 		return card;
 	}
-	public WebElement waitCard() {
-		return card;
+	public String getCardName() {
+		return card.findElement(By.xpath(".//h2[@class='card-detail-title-assist js-title-helper']")).getAttribute("innerText");
 	}
 	public void closeCard() {
 		WebElement close = card.findElement(By.xpath(".//a[@class='icon-lg icon-close dialog-close-button js-close-window']"));
 		wait.until(ExpectedConditions.elementToBeClickable(close));
 		close.click();
 	}
-	
-	public List<String> getItems(){
+	public WebElement getCardChecklist(String checklistName) throws Exception {
+		for(WebElement checklist : checklists)
+			if(checklist.findElement(By.xpath(".//h3[@class='current hide-on-edit']")).getAttribute("innerText").equals(checklistName))
+				return checklist;
+		throw new PendingException("Checklist [" + checklistName + "] not found !");
+	}
+	public List<String> getChecklistItems(){
 		List<String> items = new ArrayList<String>();
-		for(WebElement item :card.findElements(By.xpath(".//div[@class='checklist-item']")))
+		for(WebElement item : card.findElements(By.xpath(".//div[@class='checklist-item']")))
 				items.add(item.getAttribute("innerText"));
 		return items;
 	}
+	public String getCheckListName(WebElement checklist) {
+		return checklist.findElement(By.xpath(".//h3[@class='current hide-on-edit']")).getText();
+	}
 	
-	public void goMainPage() {
-		wait.until(ExpectedConditions.elementToBeClickable(backToMain));
-		backToMain.click();
+	public void clickChecklist() throws InterruptedException {
+		checklistButton.click();
+	}
+	public void setNewChecklistTitle(String title) throws InterruptedException {
+		newChecklistTitle.sendKeys(Keys.chord(Keys.CONTROL, "a"), title);
+	}
+	public void clickAddChecklist() throws InterruptedException {
+		wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//input[@class='primary wide confirm js-add-checklist']")));
+		wait.until(ExpectedConditions.elementToBeClickable(addChecklist)).click();
 	}
 	
 	public void clickNewteam() {
@@ -228,33 +222,27 @@ public class TrelloElements {
 		wait.until(ExpectedConditions.elementToBeClickable(newTeam));
 		newTeam.click();
 	}
-
 	public void waitTeamName(String teamName) {
 		Setup.waitTillValue(newTeamName, teamName);
 	}
 	public void setTeamName(String teamName) {
 		newTeamName.sendKeys(Keys.chord(Keys.CONTROL, "a"), teamName);
 	}
-
 	public String getTeamDescription() {
 		return newTeamDescription.getAttribute("value");
 	}
 	public void setTeamDescription(String teamDescription) {
 		newTeamDescription.sendKeys(Keys.chord(Keys.CONTROL, "a"), teamDescription);
 	}
-	
 	public void clickCreateTeam() {
 		wait.until(ExpectedConditions.elementToBeClickable(createTeam)).click();
 	}
-	
 	public WebElement getNewTeam() {
 		return newTeam;
 	}
-	
 	public void clickTeamSetting() throws Exception {
 		wait.until(ExpectedConditions.elementToBeClickable(teamSetting)).click();
 	}
-	
 	public void clickDeleteTeam() throws InterruptedException {
 		wait.until(ExpectedConditions.elementToBeClickable(deleteTeam));
 		Thread.sleep(500);

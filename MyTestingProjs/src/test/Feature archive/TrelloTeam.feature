@@ -17,8 +17,8 @@ Feature: Trello Board functions
     Given User is in the Team page
     When User selects Setting tab
     Then Click Delete this team
-    Then Confirm and delete the team
-    Then A confirmation is displayed
+    And Confirm and delete the team
+    And A confirmation is displayed
 
   Scenario: Test ends
     Given The test is over

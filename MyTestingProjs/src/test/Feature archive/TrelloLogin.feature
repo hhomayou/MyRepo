@@ -12,10 +12,9 @@ Feature: Trello login and viewing a board and a card
     Then Page MyBoard is loaded and it displays all the info
 
   Scenario: Click on a card to display info
-    Given User is in MyBoard page
-    When User clicks on first card
-    Then Card info is loaded and popped up
-    And User closes the card popup
+    Given User clicks on first card
+    When Card info is loaded and popped up
+    Then User closes the card popup
  
   Scenario: Test ends
   	When The test is over
