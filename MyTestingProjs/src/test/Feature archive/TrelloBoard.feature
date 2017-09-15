@@ -1,5 +1,5 @@
 #Author: hhomayounfar@qaconsultants.com
-Feature: Trello Board  
+Feature: Trello Board operations 
 
   Scenario: Login to Trello
     Given User opens Trello login page

@@ -1,7 +1,6 @@
 package TestSteps;
 
 import java.util.List;
-import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -18,7 +17,7 @@ public class TrelloTest_Steps extends Setup {
 	public static final String emailTest = "hhomayounfar@qaconsultants.com";
 	public static final String passwordTest = "pswdpswd";
 	
-	WebElement login, card, team;
+	WebElement login, team;
 	List<WebElement> teams;
 	String boardName;
 
@@ -64,34 +63,25 @@ public class TrelloTest_Steps extends Setup {
 
 	@Then("^Page MyBoard is loaded and it displays all the info$")
 	public void page_MyBoard_is_loaded_and_it_displays_all_the_info() throws Throwable {
-		// MyBoard page is loaded
-		System.out.println("List name: " + trelloElements.getTaskListTitle() + ", " + trelloElements.getTaskListCardTot() + ": ");
-		for(WebElement card: trelloElements.getCards()) {
-			System.out.print("Card: " + card.findElement(By.xpath(".//span[@class='list-card-title js-card-name']")).getAttribute("innerText"));
-			System.out.print(", Items: " + card.findElement(By.xpath(".//span[@class='badge-text']")).getAttribute("innerText"));			
-			System.out.print(", assigned to: ");
-			for(WebElement member:card.findElements(By.xpath(".//span[@class='member-initials']")))
-				System.out.print(" " + member.getAttribute("innerText"));
-			System.out.println();
-		}
+		System.out.println("List name: " + trelloElements.getBoardListTitle() + ", " + trelloElements.getBoardListCardTot() + ": ");
+		trelloElements.displayBoardListInfo();
 	}
 
 	// Display a card
 
 	@Given("^User clicks on first card$")
 	public void user_clicks_on_first_card() throws Throwable {
-		card = trelloElements.getCards().get(0);
-		card.click();
-		card = trelloElements.getCard();
-		wait.until(ExpectedConditions.elementToBeClickable(card));		
+		trelloElements.getCards().get(0).click();
+		System.out.println("Card [" + trelloElements.getCardName() + "], checklist(s): ");
+		for(WebElement checklist : trelloElements.getChecklists())
+			System.out.println("Checklist [" + trelloElements.getCheckListName(checklist) + "]");
 	}
 
 	@When("^Card info is loaded and popped up$")
 	public void Card_info_is_loaded_and_popped_up() throws Throwable {
-		System.out.println("Checklist: " + card.findElement(By.xpath(".//h3[@class='current hide-on-edit']")).getAttribute("innerText"));
 		System.out.println("Items:");
-		for(String item: trelloElements.getChecklistItems())
-			System.out.println("  " + item);			
+		for(WebElement item: trelloElements.getChecklistItems(trelloElements.getChecklist("MyChecklist")))
+			System.out.println("  " + trelloElements.getItemName(item));			
 	}
 
 	@Then("^User closes the card popup$")
@@ -101,14 +91,11 @@ public class TrelloTest_Steps extends Setup {
 	
 	// Create a team
 
+	//@Given("^User is in the main page$")
+	
 	@When("^User clicks on create new team link$")
 	public void user_clicks_on_create_new_team_link() throws Throwable {
 		trelloElements.clickNewteam();
-	}
-
-	@Then("^Create Team popup appears$")
-	public void create_Team_popup_appears() throws Throwable {
-		// Do nothing
 	}
 
 	@Then("^User enters Name and Description$")
@@ -221,26 +208,70 @@ public class TrelloTest_Steps extends Setup {
 
     @And("^Checklist is added to the card$")
     public void checklist_is_added_to_the_card() throws Throwable {
-    	System.out.println("Checklist [" + trelloElements.getCheckListName(trelloElements.getCardChecklist("Checklist1")) +
+    	System.out.println("Checklist [" + trelloElements.getCheckListName(trelloElements.getChecklist("Checklist1")) +
     			"] added to the card [" + trelloElements.getCardName() + "]");
     }
 
-    // Delete a checklist
+    // Delete the checklist
     
     @Given("^User is in the card detail popup$")
     public void user_is_in_the_card_detail_popup() throws Throwable {
+		System.out.println("Card [" + trelloElements.getCardName() + "] popup is active");
     }
 
     @When("^User clicks on delete link$")
     public void user_clicks_on_delete_link() throws Throwable {
+    	trelloElements.clickDelChecklist(trelloElements.getChecklist("Checklist1"));    	
+    	try {
+			trelloElements.getChecklist("Checklist1");
+		} catch (Exception e) {
+			if(!e.getMessage().equals("Checklist [Checklist1] not found !")) throw e;
+		}
     }
 
     @Then("^Checklist is deleted$")
     public void checklist_is_deleted() throws Throwable {
+		System.out.println("Checklist [Checklist1] successfully deleted");
     }
 
 	//@And("^User closes the card popup$")
-  
+    
+    // Add an item to a checklist
+    
+    //@Given("^User is in the card detail popup$")   
+    
+    @When("^User clicks on add an item box of mychecklist and enters item$")
+    public void user_clicks_on_add_an_item_box_of_mychecklist_and_enters_item() throws Throwable {    	
+    	trelloElements.clickAddItem(trelloElements.getChecklist("MyChecklist"), "Item1");
+    }
+
+    @Then("^Item is added to the checklist$")
+    public void item_is_added_to_the_checklist() throws Throwable {
+    	trelloElements.getItem(trelloElements.getChecklistItems(trelloElements.getChecklist("MyChecklist")), "Item1");
+    }
+
+    @When("^User clicks on box left to the item$")
+    public void user_clicks_on_box_left_to_the_item() throws Throwable {
+    }
+
+    @Then("^Item is completed$")
+    public void item_is_completed() throws Throwable {
+    }
+
+    @When("^User clicks on the item$")
+    public void user_clicks_on_the_item() throws Throwable {
+    }
+
+    // Delete an item from the checklist
+    
+    @Then("^Users clicks on Delete link$")
+    public void users_clicks_on_Delete_link() throws Throwable {
+    }
+    
+    @And("^Item is deleted$")
+    public void item_is_deleted() throws Throwable {
+    }
+    
 	// Test ends
 	
 	@Given("^The test is over$")

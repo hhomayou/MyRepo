@@ -1,8 +1,6 @@
 package PageObject;
 
-import java.util.ArrayList;
 import java.util.List;
-
 import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebElement;
@@ -26,11 +24,11 @@ public class TrelloElements {
 	@FindBy(how = How.XPATH, xpath = "//div[@class='boards-page-board-section mod-no-sidebar']")
 	List<WebElement> teams;
 	@FindBy(how = How.XPATH, xpath = "//div[@class='list-header js-list-header u-clearfix is-menu-shown']")
-	WebElement taskList;
+	WebElement boardList;
 	@FindBy(how = How.XPATH, xpath = "//a[@class='list-card js-member-droppable ui-droppable']")
 	List<WebElement> cards;
 	@FindBy(how = How.XPATH, xpath = "//div[@class='window']")
-	WebElement card;
+	WebElement card; // Current card popped up 
 	@FindBy(how = How.XPATH, xpath = "//span[@class='header-btn-icon icon-lg icon-board-back-to-home light']")
 	WebElement backToMain;
 	@FindBy(how = How.XPATH, xpath = "//div[@class='boards-page-board-section u-clearfix']")
@@ -79,8 +77,11 @@ public class TrelloElements {
 	WebElement newChecklistTitle;
 	@FindBy(how = How.XPATH, xpath = "//input[@class='primary wide confirm js-add-checklist']") //"//input[@value='Add']")
 	WebElement addChecklist;
-	@FindBy(how = How.XPATH, xpath = "//div[@class='checklist']")
+	@FindBy(how = How.XPATH, xpath = "//div[@class='checklist']") // Checklists of current card popped up
 	List<WebElement> checklists;
+	@FindBy(how = How.XPATH, xpath = "//input[@value='Delete Checklist']")
+	WebElement deleteChecklistButton; // Delete Confirmation
+	
 	
 	public String getEmail() {
 		return email.getAttribute("value");
@@ -109,7 +110,7 @@ public class TrelloElements {
 		wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//span[@title='MyBoard']"))); // Wait till next page is loaded		
 	}
 	
-	// Boards [
+	// Team [
 	public List<WebElement> getTeams() {
 		return teams;
 	}
@@ -126,6 +127,9 @@ public class TrelloElements {
 			System.out.println(", Board: [" + team.findElement(By.xpath(".//span[@class='board-tile-details-name']")).getAttribute("innerText") + "]");
 		}
 	}
+	// Team ]
+
+	// Board [
 	public void clickMyBoard() throws Exception {
 		wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//li[@class='boards-page-board-section-list-item']"))); // Wait till next page is loaded				
 		wait.until(ExpectedConditions.elementToBeClickable(myBoard)).click();		
@@ -166,17 +170,30 @@ public class TrelloElements {
 	public String getBoardDeletedMessage() throws InterruptedException {
 		return boardDeletedMessage.findElement(By.xpath(".//h1")).getAttribute("innerText");
 	}
-	// Boards ]
+	// Board ]
 		
-	public String getTaskListTitle() {
-		return taskList.findElement(By.xpath("//h2[@class='list-header-name-assist js-list-name-assist']")).getAttribute("textContent");
+	// Board List [
+	public String getBoardListTitle() {
+		return boardList.findElement(By.xpath("//h2[@class='list-header-name-assist js-list-name-assist']")).getAttribute("textContent");
 	}
-	public String getTaskListCardTot() {
-		return taskList.findElement(By.xpath("//p[@class='list-header-num-cards hide js-num-cards']")).getAttribute("innerText");
+	public String getBoardListCardTot() {
+		return boardList.findElement(By.xpath("//p[@class='list-header-num-cards hide js-num-cards']")).getAttribute("innerText");
 	}
+	public void displayBoardListInfo() {
+		for(WebElement card: getCards()) {
+			System.out.print("Card: " + card.findElement(By.xpath(".//span[@class='list-card-title js-card-name']")).getAttribute("innerText"));
+			System.out.print(", Items: " + card.findElement(By.xpath(".//span[@class='badge-text']")).getAttribute("innerText"));			
+			System.out.print(", assigned to: ");
+			for(WebElement member : card.findElements(By.xpath(".//span[@class='member-initials']")))
+				System.out.print(" " + member.getAttribute("innerText"));
+			System.out.println();
+		}
+	}
+	// Board List ]
 
+	// Card [
 	public List<WebElement> getCards() {
-		return taskList.findElements(By.xpath("//a[@class='list-card js-member-droppable ui-droppable']"));
+		return boardList.findElements(By.xpath("//a[@class='list-card js-member-droppable ui-droppable']"));
 	}
 	public WebElement getCard() {
 		return card;
@@ -189,22 +206,23 @@ public class TrelloElements {
 		wait.until(ExpectedConditions.elementToBeClickable(close));
 		close.click();
 	}
-	public WebElement getCardChecklist(String checklistName) throws Exception {
+	// Card ]
+
+	// CheckList [
+	public List<WebElement> getChecklists() { // Checklist of the current card popped up
+		return checklists; 
+	}
+	public WebElement getChecklist(String checklistName) throws Exception {
 		for(WebElement checklist : checklists)
-			if(checklist.findElement(By.xpath(".//h3[@class='current hide-on-edit']")).getAttribute("innerText").equals(checklistName))
-				return checklist;
+			if(getCheckListName(checklist).equals(checklistName)) return checklist;
 		throw new PendingException("Checklist [" + checklistName + "] not found !");
 	}
-	public List<String> getChecklistItems(){
-		List<String> items = new ArrayList<String>();
-		for(WebElement item : card.findElements(By.xpath(".//div[@class='checklist-item']")))
-				items.add(item.getAttribute("innerText"));
-		return items;
+	public List<WebElement> getChecklistItems(WebElement checklist){
+		return checklist.findElements(By.xpath(".//div[@class='checklist-item']"));
 	}
 	public String getCheckListName(WebElement checklist) {
 		return checklist.findElement(By.xpath(".//h3[@class='current hide-on-edit']")).getText();
-	}
-	
+	}		
 	public void clickChecklist() throws InterruptedException {
 		checklistButton.click();
 	}
@@ -215,7 +233,30 @@ public class TrelloElements {
 		wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//input[@class='primary wide confirm js-add-checklist']")));
 		wait.until(ExpectedConditions.elementToBeClickable(addChecklist)).click();
 	}
+	public void clickDelChecklist(WebElement checklist) throws InterruptedException {
+		WebElement deleteChecklistLink = checklist.findElement(By.xpath(".//a[@class='hide-on-edit quiet js-confirm-delete']"));
+		wait.until(ExpectedConditions.elementToBeClickable(deleteChecklistLink)).click();
+		wait.until(ExpectedConditions.elementToBeClickable(deleteChecklistButton)).click();
+	}
+	public void clickAddItem(WebElement checklist, String item) {
+		WebElement addItem = checklist.findElement(By.xpath(".//textarea[@placeholder='Add an item…']"));
+		addItem.sendKeys(Keys.chord(Keys.CONTROL, "a"), item);
+		addItem.click(); // Click 'Add an item' link
+		checklist.findElement(By.xpath(".//input[@value='Add']")).click(); // Click 'Add' button to confirm
+	}
+	public String getItemName(WebElement item) {
+		return item.getAttribute("innerText");
+	}
+	public WebElement getItem(List<WebElement> items, String itemName) {
+		for(WebElement item : items) {
+			// gggg
+			if(item.getAttribute("innerText").equals(itemName)) return item;
+		}
+		throw new PendingException("Item " + itemName + " not found !");
+	}
+	// CheckList ]
 	
+	// Team [
 	public void clickNewteam() {
 		wait.until(ExpectedConditions.elementToBeClickable(newTeamParent)).click();
 		WebElement newTeam = newTeamParent.findElement(By.xpath(".//a[@class='quiet-button u-float-left']"));
@@ -253,4 +294,5 @@ public class TrelloElements {
 		Thread.sleep(500);
 		deleteTeamConfirm.click();
 	}
+	// Team ]
 }

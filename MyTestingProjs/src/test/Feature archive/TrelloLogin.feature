@@ -1,5 +1,5 @@
 #Author: hhomayounfar@qaconsultants.com
-Feature: Trello login and viewing a board and a card
+Feature: Trello login, viewing a board and its card
 
   Scenario: Login to Trello
     Given User opens Trello login page
@@ -17,5 +17,6 @@ Feature: Trello login and viewing a board and a card
     Then User closes the card popup
  
   Scenario: Test ends
-  	When The test is over
+    Given The test is over
+    When There is no more test
     Then The page closes

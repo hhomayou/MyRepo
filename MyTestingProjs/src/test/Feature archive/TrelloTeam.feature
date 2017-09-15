@@ -1,5 +1,5 @@
 #Author: hhomayounfar@qaconsultants.com
-Feature: Trello Board functions
+Feature: Trello Team operations
 
   Scenario: Login to Trello
     Given User opens Trello login page
@@ -9,8 +9,7 @@ Feature: Trello Board functions
   Scenario: Create a new team
     Given User is in the main page
     When User clicks on create new team link
-    Then Create Team popup appears
-    And User enters Name and Description
+    Then User enters Name and Description
     And The new team is created and displayed
 
   Scenario: Delete the team
