@@ -1,11 +1,16 @@
 package TestSteps;
 
+import java.io.IOException;
+import java.sql.SQLException;
 import java.util.List;
+
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import PageObject.Setup;
 import PageObject.TrelloElements;
+import cucumber.api.java.Before;
 import cucumber.api.java.en.And;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
@@ -20,43 +25,46 @@ public class TrelloTest_Steps extends Setup {
 	WebElement login, team;
 	List<WebElement> teams;
 	String boardName;
+	private static boolean dunit = false;	
 
-	// Login
+    @Before
+    public void beforeAll() throws ClassNotFoundException, IOException, SQLException {
+        if(!dunit) {
+            Runtime.getRuntime().addShutdownHook(new Thread() {
+                public void run() { // After all
+            		driver.quit();
+                }
+            });
+            // Before all
+    		beforeClassMethod("https://trello.com/login");
+    		trelloElements = PageFactory.initElements(driver, TrelloElements.class); // Initial elements
+    		login = trelloElements.getLogin();
+    		wait.until(ExpectedConditions.elementToBeClickable(login));
+    		// Page loaded, login now
+    		if(!trelloElements.getEmail().equals(emailTest)) { // Email is not entered yet 
+    			trelloElements.setEmail(emailTest);
+    			trelloElements.setPassword(passwordTest);
+    			trelloElements.waitPassword(passwordTest);
+    		}
+    		login.click();	
+    		trelloElements.waitLoginDone();
+    		System.out.println("User [" + emailTest + "] logged in successfully");
+            dunit = true;
+        }
+    }	
 	
-	@Given("^User opens Trello login page$")
-	public void user_opens_Trello_login_page() throws Throwable {
-		beforeClassMethod("https://trello.com/login");
-		trelloElements = PageFactory.initElements(driver, TrelloElements.class); // Initial elements
-		login = trelloElements.getLogin();
-		wait.until(ExpectedConditions.elementToBeClickable(login));
+	// Login and display teams
+	
+	@Given("^User logs in to Trello main page$")
+	public void user_logs_in_to_Trello_main_page() throws Throwable {
 	}
 
-	@When("^User enters login info$")
-	public void user_enters_login_info() throws Throwable {
-		// Page loaded, login now
-		if(!trelloElements.getEmail().equals(emailTest)) { // Email is not entered yet 
-			trelloElements.setEmail(emailTest);
-			trelloElements.setPassword(passwordTest);
-			trelloElements.waitPassword(passwordTest);
-		}
-		login.click();	
-		trelloElements.waitLoginDone();
-		System.out.println("User [" + emailTest + "] logged in successfully");
-	}
-
-	@Then("^List of teams and boards is displayed in the main page$")
+	@When("^List of teams and boards is displayed in the main page$")
 	public void list_of_teams_and_boards_is_displayed_in_the_main_page() throws Throwable {
 		trelloElements.listTeams();		
 	}	
 
-	// Display Myboard
-
-	@Given("^User is in the main page$")
-	public void User_is_in_the_main_page() throws Throwable {
-		// Nothing to do
-	}	
-	
-	@When("^User clicks on MyBoard box$")
+	@Then("^User clicks on MyBoard box$")
 	public void user_clicks_on_MyBoard_box() throws Throwable { // and goes to MyBoard page
     	trelloElements.clickMyBoard();		
 	}
@@ -242,52 +250,84 @@ public class TrelloTest_Steps extends Setup {
     
     @When("^User clicks on add an item box of mychecklist and enters item$")
     public void user_clicks_on_add_an_item_box_of_mychecklist_and_enters_item() throws Throwable {    	
-    	trelloElements.clickAddItem(trelloElements.getChecklist("MyChecklist"), "Item1");
+    	trelloElements.addItem(trelloElements.getChecklist("MyChecklist"), "Item1");
     }
 
     @Then("^Item is added to the checklist$")
     public void item_is_added_to_the_checklist() throws Throwable {
-    	trelloElements.getItem(trelloElements.getChecklistItems(trelloElements.getChecklist("MyChecklist")), "Item1");
+    	WebElement item = trelloElements.getItem(trelloElements.getChecklistItems(trelloElements.getChecklist("MyChecklist")), "Item1");
+    	trelloElements.cancelAddItem(item);
+    	System.out.println("Item [Item1] added to checklist [MyChecklist]");
     }
+
+    // Complete an item in the checklist
 
     @When("^User clicks on box left to the item$")
     public void user_clicks_on_box_left_to_the_item() throws Throwable {
+    	trelloElements.toggleItemCheckbox(trelloElements.getItem(trelloElements.getChecklistItems(trelloElements.getChecklist("MyChecklist")), "Item1"));
     }
 
     @Then("^Item is completed$")
     public void item_is_completed() throws Throwable {
+    	trelloElements.getItem(trelloElements.getChecklistItemsCompleted(trelloElements.getChecklist("MyChecklist")), "Item1");
+    	System.out.println("Item [Item1] completed in checklist[MyChecklist]");
     }
 
+    // Delete the item from the checklist   
+    
     @When("^User clicks on the item$")
     public void user_clicks_on_the_item() throws Throwable {
+    	WebElement item = trelloElements.getItem(trelloElements.getChecklistItemsCompleted(trelloElements.getChecklist("MyChecklist")), "Item1");
+		wait.until(ExpectedConditions.elementToBeClickable(item)).click();
     }
-
-    // Delete an item from the checklist
-    
+ 
     @Then("^Users clicks on Delete link$")
     public void users_clicks_on_Delete_link() throws Throwable {
+    	trelloElements.delItem();
     }
     
     @And("^Item is deleted$")
-    public void item_is_deleted() throws Throwable {
+    public void item_is_deleted() throws Throwable {    	
+    	try {
+			trelloElements.getItem(trelloElements.getChecklistItemsCompleted(trelloElements.getChecklist("MyChecklist")), "Item1");
+		} catch (Exception e) {
+			if(!e.getMessage().equals("Item Item1 not found !")) throw e;
+		}
+    	System.out.println("Item [Item1] deleted from checklist [MyChecklist]");
     }
-    
-	// Test ends
 	
-	@Given("^The test is over$")
-	public void the_test_is_over() throws Throwable {
-		// Do nothing
-	}
+    // Remove a member
+    //@Given("^User clicks on MyBoard box$")
 
-	@When("^There is no more test$")
-	public void there_is_no_more_test() throws Throwable {
-		// Do nothing
-	}
-	
-	@Then("^The page closes$")
-	public void the_page_closes() throws Throwable {
-		Thread.sleep(1000);
-		afterClassMethod();
-	}
-	
+	//@When("^User clicks on first card$")
+    
+    @Then("^User clicks on Member button$")
+    public void user_clicks_on_Member_button() throws Throwable {
+    	trelloElements.clickCardMembers();
+    }
+
+    @Given("^User clicks on the Member to toggle status$")
+    public void user_clicks_on_the_Member_to_toggle_status() throws Throwable {
+    	trelloElements.getCardMember("HH").click();
+    }
+
+    @Then("^Member is removed from the card$")
+    public void member_is_removed_from_the_card() throws Throwable {
+    	String hh = trelloElements.getCardMember("HH").findElement(By.xpath(".//span[@class='icon-sm icon-check checked-icon']")).getCssValue("icon-check:before");
+    	System.out.println("Member [>" + hh + "<] removed from checklist [MyChecklist]");
+    	Thread.sleep(2000);
+    }
+
+    // Add a member
+
+    //@Given("^User clicks on the Member to toggle status$")
+
+    @When("^Member is added from the card$")
+    public void member_is_added_from_the_card() throws Throwable {
+    }
+
+    @Then("^Users closes the members popup$")
+    public void users_closes_the_members_popup() throws Throwable {
+    	System.out.println("Member [] added to checklist [MyChecklist]");
+    }        
 }

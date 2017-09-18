@@ -81,6 +81,14 @@ public class TrelloElements {
 	List<WebElement> checklists;
 	@FindBy(how = How.XPATH, xpath = "//input[@value='Delete Checklist']")
 	WebElement deleteChecklistButton; // Delete Confirmation
+	@FindBy(how = How.XPATH, xpath = "//a[@class='icon-lg icon-close dark-hover cancel js-cancel-checklist-item']")
+	WebElement cancelAddItem;
+	@FindBy(how = How.XPATH, xpath = "//a[@class='option delete js-delete-item']")
+	WebElement delItem;
+	@FindBy(how = How.XPATH, xpath = "//a[@class='button-link js-change-card-members']")
+	WebElement membersButton;
+	@FindBy(how = How.XPATH, xpath = "//div[li[contains(@class, 'item js-member-item')]]")
+	List<WebElement> cardMembers;
 	
 	
 	public String getEmail() {
@@ -206,6 +214,16 @@ public class TrelloElements {
 		wait.until(ExpectedConditions.elementToBeClickable(close));
 		close.click();
 	}
+	public void clickCardMembers() {
+		membersButton.click();
+	}
+	public WebElement getCardMember(String memberInitial) throws InterruptedException { // Get the member of the current card popped up
+		for(WebElement member : cardMembers) {
+			WebElement memberFound = member.findElement(By.xpath("//span[@class='member-initials']"));
+			if(memberFound.getText().equals(memberInitial)) return member;
+		}
+		throw new PendingException("Member [" + memberInitial + "] not found !");
+	}
 	// Card ]
 
 	// CheckList [
@@ -216,9 +234,6 @@ public class TrelloElements {
 		for(WebElement checklist : checklists)
 			if(getCheckListName(checklist).equals(checklistName)) return checklist;
 		throw new PendingException("Checklist [" + checklistName + "] not found !");
-	}
-	public List<WebElement> getChecklistItems(WebElement checklist){
-		return checklist.findElements(By.xpath(".//div[@class='checklist-item']"));
 	}
 	public String getCheckListName(WebElement checklist) {
 		return checklist.findElement(By.xpath(".//h3[@class='current hide-on-edit']")).getText();
@@ -238,23 +253,39 @@ public class TrelloElements {
 		wait.until(ExpectedConditions.elementToBeClickable(deleteChecklistLink)).click();
 		wait.until(ExpectedConditions.elementToBeClickable(deleteChecklistButton)).click();
 	}
-	public void clickAddItem(WebElement checklist, String item) {
+	// CheckList ]
+	
+	// Item [
+	public List<WebElement> getChecklistItems(WebElement checklist){
+		return checklist.findElements(By.xpath(".//div[@class='checklist-item']"));
+	}
+	public List<WebElement> getChecklistItemsCompleted(WebElement checklist){
+		return checklist.findElements(By.xpath(".//div[@class='checklist-item checklist-item-state-complete']"));
+	}
+	public void addItem(WebElement checklist, String item) {
 		WebElement addItem = checklist.findElement(By.xpath(".//textarea[@placeholder='Add an item…']"));
 		addItem.sendKeys(Keys.chord(Keys.CONTROL, "a"), item);
 		addItem.click(); // Click 'Add an item' link
 		checklist.findElement(By.xpath(".//input[@value='Add']")).click(); // Click 'Add' button to confirm
 	}
+	public void cancelAddItem(WebElement item) {
+		cancelAddItem.click();
+	}
 	public String getItemName(WebElement item) {
 		return item.getAttribute("innerText");
 	}
+	public void toggleItemCheckbox(WebElement item) throws InterruptedException {
+		item.findElement(By.xpath(".//div[@class='checklist-item-checkbox enabled js-toggle-checklist-item']")).click();
+	}
 	public WebElement getItem(List<WebElement> items, String itemName) {
-		for(WebElement item : items) {
-			// gggg
-			if(item.getAttribute("innerText").equals(itemName)) return item;
-		}
+		for(WebElement item : items)
+			if(item.getText().equals(itemName)) return item;
 		throw new PendingException("Item " + itemName + " not found !");
 	}
-	// CheckList ]
+	public void delItem() {
+		delItem.click();
+	}
+	// Item ]
 	
 	// Team [
 	public void clickNewteam() {

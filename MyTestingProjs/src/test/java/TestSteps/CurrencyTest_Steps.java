@@ -96,10 +96,6 @@ public class CurrencyTest_Steps extends Setup {
 		if (currencyExchange.getCurrencyWant() - currencyElements.getCurrencyWantAmount() > 1.5)
 			throw new PendingException("currencyWant[" + currencyExchange.getCurrencyWant() + "] is not " + currencyElements.getCurrencyWantAmount());
 		System.out.println(" Ok");
-	}
-
-	@Then("^End test$")
-	public void EndTest() throws Throwable {
-		afterClassMethod();
+		driver.quit();
 	}
 }

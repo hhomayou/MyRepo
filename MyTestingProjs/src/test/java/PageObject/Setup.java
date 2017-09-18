@@ -27,7 +27,8 @@ import TestSteps.CurrencyExchange;
 public abstract class Setup {
 	protected static WebDriver driver;
 	protected static WebDriverWait wait;
-
+	//private final static Logger LOGGER = Logger.getLogger(Setup.class.getName());
+	
 	public static WebDriver beforeClassMethod(String pageURI) throws IOException, ClassNotFoundException, SQLException {
 		System.setProperty("webdriver.chrome.driver", "Resources/chromedriver.exe");
 		driver = new ChromeDriver();
@@ -38,9 +39,9 @@ public abstract class Setup {
 		return driver;
 	}
 
-	public static void afterClassMethod() {
-		driver.quit();
-	}
+//	public static void afterClassMethod() {
+//		driver.quit();
+//	}
 
 	//
 	// Useful functions
