@@ -3,13 +3,12 @@ package TestSteps;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
-
-import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import PageObject.Setup;
 import PageObject.TrelloElements;
+import cucumber.api.PendingException;
 import cucumber.api.java.Before;
 import cucumber.api.java.en.And;
 import cucumber.api.java.en.Given;
@@ -22,7 +21,7 @@ public class TrelloTest_Steps extends Setup {
 	public static final String emailTest = "hhomayounfar@qaconsultants.com";
 	public static final String passwordTest = "pswdpswd";
 	
-	WebElement login, team;
+	WebElement login, team, member;
 	List<WebElement> teams;
 	String boardName;
 	private static boolean dunit = false;	
@@ -230,15 +229,12 @@ public class TrelloTest_Steps extends Setup {
     @When("^User clicks on delete link$")
     public void user_clicks_on_delete_link() throws Throwable {
     	trelloElements.clickDelChecklist(trelloElements.getChecklist("Checklist1"));    	
-    	try {
-			trelloElements.getChecklist("Checklist1");
-		} catch (Exception e) {
-			if(!e.getMessage().equals("Checklist [Checklist1] not found !")) throw e;
-		}
     }
 
     @Then("^Checklist is deleted$")
     public void checklist_is_deleted() throws Throwable {
+		if(trelloElements.getChecklist("Checklist1") != null)
+				throw new PendingException("Checklist [Checklist1] not deleted !");
 		System.out.println("Checklist [Checklist1] successfully deleted");
     }
 
@@ -288,11 +284,8 @@ public class TrelloTest_Steps extends Setup {
     
     @And("^Item is deleted$")
     public void item_is_deleted() throws Throwable {    	
-    	try {
-			trelloElements.getItem(trelloElements.getChecklistItemsCompleted(trelloElements.getChecklist("MyChecklist")), "Item1");
-		} catch (Exception e) {
-			if(!e.getMessage().equals("Item Item1 not found !")) throw e;
-		}
+		if(trelloElements.getItem(trelloElements.getChecklistItemsCompleted(trelloElements.getChecklist("MyChecklist")), "Item1") != null)
+	    	throw new PendingException("Item [Item1] not deleted from checklist [MyChecklist] !");
     	System.out.println("Item [Item1] deleted from checklist [MyChecklist]");
     }
 	
@@ -306,28 +299,103 @@ public class TrelloTest_Steps extends Setup {
     	trelloElements.clickCardMembers();
     }
 
-    @Given("^User clicks on the Member to toggle status$")
+    @And("^User clicks on the Member to toggle status$")
     public void user_clicks_on_the_Member_to_toggle_status() throws Throwable {
-    	trelloElements.getCardMember("HH").click();
+    	member = trelloElements.getCardMember("HH");
+    	member.click();
     }
 
-    @Then("^Member is removed from the card$")
+    @And("^Member is removed from the card$")
     public void member_is_removed_from_the_card() throws Throwable {
-    	String hh = trelloElements.getCardMember("HH").findElement(By.xpath(".//span[@class='icon-sm icon-check checked-icon']")).getCssValue("icon-check:before");
-    	System.out.println("Member [>" + hh + "<] removed from checklist [MyChecklist]");
-    	Thread.sleep(2000);
+     	if(trelloElements.getMemberStatus(member)) throw new PendingException("Member [HH] was not removed from card [MyCard1] !");
+     	System.out.println("Member [HH] removed from card [MyCard1]");
     }
+
+    @And("^Users closes the members popup$")
+    public void users_closes_the_members_popup() throws Throwable {
+    	trelloElements.closeMember();
+    }        
 
     // Add a member
 
-    //@Given("^User clicks on the Member to toggle status$")
+	//@Given("^User clicks on first card$")
 
-    @When("^Member is added from the card$")
+    //@When("^User clicks on the Member to toggle status$")
+
+    @Then("^Member is added to the card$")
     public void member_is_added_from_the_card() throws Throwable {
+     	if(!trelloElements.getMemberStatus(member)) throw new PendingException("Member [HH] was not added to card [MyCard1] !");
+     	System.out.println("Member [HH] added to card [MyCard1]");		
     }
 
-    @Then("^Users closes the members popup$")
-    public void users_closes_the_members_popup() throws Throwable {
-    	System.out.println("Member [] added to checklist [MyChecklist]");
-    }        
+    //@And("^Users closes the members popup$")
+    
+    // Add comments
+
+	//@Gievn("^User clicks on MyBoard box$")
+    
+    //@When("^User clicks on first card$")
+
+    @Then("^User types some comments$")
+    public void user_types_some_comments() throws Throwable {
+    	trelloElements.setComment("Comment1");
+    }
+
+    @And("^User clicks on save button$")
+    public void user_clicks_on_save_button() throws Throwable {
+    	trelloElements.clickSaveComment();
+    }
+
+    @And("^Comment is added$")
+    public void comment_is_added() throws Throwable {
+    	if(trelloElements.getComment("Comment1") == null)
+    		throw new PendingException("Comment [Comment1] not added !");			
+     	System.out.println("Comment [Comment1] added to card [MyCard1]");		
+    }
+
+    //@And("^User closes the card popup$")
+    
+    // Remove comments
+    
+	//@Given("^User clicks on first card$")
+
+    @When("^User clicks on comment delete link$")
+    public void user_clicks_on_comment_delete_link() throws Throwable {
+    	trelloElements.clickDeleteComment("Comment1");
+    }
+
+    @Then("^Comment is removed$")
+    public void comment_is_removed() throws Throwable {
+		if(trelloElements.getComment("Comment1") != null)
+			throw new PendingException("Comment [Comment1] not removed !");			
+     	System.out.println("Comment [Comment1] removed from card [MyCard1]");
+    }
+
+    //@And("^User closes the card popup$")
+   
+    // Add a Due date
+
+    //@Then("^User clicks on duedate button$")
+
+    @Then("^User sets the date and click on save button$")
+    public void user_sets_the_date_and_click_on_save_button() throws Throwable {
+    }
+
+    @Then("^Date is set$")
+    public void date_is_set() throws Throwable {
+    }
+
+    //@Then("^Users closes the duedate popup$")
+   
+    // Remove the due date
+    
+    //@Then("^User clicks on duedate button$")
+    
+    @When("^Duedate is removed$")
+    public void duedate_is_removed() throws Throwable {
+    }
+
+    @When("^Users closes the duedate popup$")
+    public void users_closes_the_duedate_popup() throws Throwable {
+    }
 }

@@ -2,6 +2,7 @@ package PageObject;
 
 import java.util.List;
 import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
@@ -89,8 +90,18 @@ public class TrelloElements {
 	WebElement membersButton;
 	@FindBy(how = How.XPATH, xpath = "//div[li[contains(@class, 'item js-member-item')]]")
 	List<WebElement> cardMembers;
-	
-	
+	@FindBy(how = How.XPATH, xpath = "//a[@class='pop-over-header-close-btn icon-sm icon-close']")
+	WebElement closeMemberButton;		
+	@FindBy(how = How.XPATH, xpath = "//textarea[@class='comment-box-input js-new-comment-input']")
+	WebElement commentTextarea;		
+	@FindBy(how = How.XPATH, xpath = "//input[@class='primary confirm mod-no-top-bottom-margin js-add-comment']")
+	WebElement saveCommentButton;		
+	@FindBy(how = How.XPATH, xpath = "//input[@value='Delete Comment']")
+	WebElement deleteCommentButton;		
+	@FindBy(how = How.XPATH, xpath = "//div[@class='phenom mod-comment-type']")
+	List<WebElement> comments;		
+
+	// Email, password login [
 	public String getEmail() {
 		return email.getAttribute("value");
 	}
@@ -199,8 +210,8 @@ public class TrelloElements {
 	}
 	// Board List ]
 
-	// Card [
-	public List<WebElement> getCards() {
+	// Board card [
+	public List<WebElement> getCards() { // Get cards of the current board
 		return boardList.findElements(By.xpath("//a[@class='list-card js-member-droppable ui-droppable']"));
 	}
 	public WebElement getCard() {
@@ -214,6 +225,9 @@ public class TrelloElements {
 		wait.until(ExpectedConditions.elementToBeClickable(close));
 		close.click();
 	}
+	// Board Card ]
+
+	// Card member [
 	public void clickCardMembers() {
 		membersButton.click();
 	}
@@ -224,16 +238,24 @@ public class TrelloElements {
 		}
 		throw new PendingException("Member [" + memberInitial + "] not found !");
 	}
-	// Card ]
+	public boolean getMemberStatus(WebElement member) {
+    	String memberStatus = ((JavascriptExecutor) Setup.driver)
+     		   .executeScript("return window.getComputedStyle(document.getElementsByClassName('icon-sm icon-check checked-icon')[0] , '').getPropertyValue('display')", member).toString();
+    	return memberStatus.equals("block");
+	}
+	public void closeMember(){
+		closeMemberButton.click();
+	}
+	// Card member ]
 
-	// CheckList [
+	// Card checkList [
 	public List<WebElement> getChecklists() { // Checklist of the current card popped up
 		return checklists; 
 	}
 	public WebElement getChecklist(String checklistName) throws Exception {
 		for(WebElement checklist : checklists)
 			if(getCheckListName(checklist).equals(checklistName)) return checklist;
-		throw new PendingException("Checklist [" + checklistName + "] not found !");
+		return null;
 	}
 	public String getCheckListName(WebElement checklist) {
 		return checklist.findElement(By.xpath(".//h3[@class='current hide-on-edit']")).getText();
@@ -253,9 +275,31 @@ public class TrelloElements {
 		wait.until(ExpectedConditions.elementToBeClickable(deleteChecklistLink)).click();
 		wait.until(ExpectedConditions.elementToBeClickable(deleteChecklistButton)).click();
 	}
-	// CheckList ]
+	// Card checkList ]
 	
-	// Item [
+	// Card comment [
+	public void setComment(String comment) {
+		commentTextarea.sendKeys(Keys.chord(Keys.CONTROL, "a"), comment);
+	}
+	
+	public WebElement getComment(String commentString) {
+		for(WebElement comment : comments)
+			if(comment.findElement(By.xpath(".//textarea[@class='comment-box-input js-text']")).getAttribute("innerText").equals(commentString)) return comment;
+		return null;
+	}
+
+	public void clickSaveComment() {
+		wait.until(ExpectedConditions.elementToBeClickable(saveCommentButton)).click();
+	}
+
+	public void clickDeleteComment(String commentString) {
+		WebElement deleteCommentLink = getComment(commentString).findElement(By.xpath("//a[@class='js-confirm-delete-action']"));
+		wait.until(ExpectedConditions.elementToBeClickable(deleteCommentLink)).click();
+		wait.until(ExpectedConditions.elementToBeClickable(deleteCommentButton)).click();
+	}
+	// Card comment ]
+	
+	// Checklist item [
 	public List<WebElement> getChecklistItems(WebElement checklist){
 		return checklist.findElements(By.xpath(".//div[@class='checklist-item']"));
 	}
@@ -280,12 +324,12 @@ public class TrelloElements {
 	public WebElement getItem(List<WebElement> items, String itemName) {
 		for(WebElement item : items)
 			if(item.getText().equals(itemName)) return item;
-		throw new PendingException("Item " + itemName + " not found !");
+		return null;
 	}
 	public void delItem() {
 		delItem.click();
 	}
-	// Item ]
+	// Checklist item ]
 	
 	// Team [
 	public void clickNewteam() {
