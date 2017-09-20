@@ -11,4 +11,3 @@ Feature: Trello Team operations
     When User selects Setting tab
     Then Click Delete this team
     And Confirm and delete the team
-    And A confirmation is displayed

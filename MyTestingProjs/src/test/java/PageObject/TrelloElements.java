@@ -143,14 +143,10 @@ public class TrelloElements {
 		throw new Exception("Team [" + teamName + "] was not found !");
 	}
 
-	@FindBy(how = How.XPATH, xpath = ".//h3[@class='boards-page-board-section-header-name']")
-	WebElement teamName;		
 	public void listTeams() {
-		
 		System.out.println("List of the teams:");
 		for(WebElement team : teams) {
 			System.out.print("Team: [" + team.findElement(By.xpath(".//h3[@class='boards-page-board-section-header-name']")).getAttribute("innerText") + "]");
-			System.out.print("Team2: [" + team.findElement(By.className(teamName.getAttribute("class"))).getAttribute("innerText")) ;
 			System.out.println(", Board: [" + team.findElement(By.xpath(".//span[@class='board-tile-details-name']")).getAttribute("innerText") + "]");
 		}
 	}

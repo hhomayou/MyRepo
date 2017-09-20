@@ -39,9 +39,9 @@ public abstract class Setup {
 		return driver;
 	}
 
-//	public static void afterClassMethod() {
-//		driver.quit();
-//	}
+	//	public static void afterClassMethod() {
+	//		driver.quit();
+	//	}
 
 	//
 	// Useful functions

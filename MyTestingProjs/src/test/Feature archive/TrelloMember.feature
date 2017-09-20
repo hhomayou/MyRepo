@@ -10,8 +10,9 @@ Feature: Trello Member operations
 		And Users closes the members popup
     
   Scenario: Add a member to a card
-    Given User clicks on Member button
-    When User clicks on the Member to toggle status
-    Then Member is added to the card
+    Given User clicks on first card
+    When User clicks on Member button
+    Then User clicks on the Member to toggle status
+    And Member is added to the card
 		And Users closes the members popup
     

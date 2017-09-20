@@ -8,12 +8,12 @@ Feature: Trello Checklist item operations
     And Item is added to the checklist
 
   Scenario: Complete an item of a checklist
-    Given User is in the card detail popup
+    Given User clicks on first card
     When User clicks on box left to the item
     Then Item is completed
 
   Scenario: Delete the item from the checklist
-    Given User is in the card detail popup
+    Given User clicks on first card
     When User clicks on the item
     Then Users clicks on Delete link
 		And Item is deleted

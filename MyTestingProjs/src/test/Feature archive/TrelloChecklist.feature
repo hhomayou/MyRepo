@@ -9,7 +9,6 @@ Feature: Trello Checklist operations
     And Checklist is added to the card
 
   Scenario: Delete the checklist from the card
-    Given User is in the card detail popup
+    Given User clicks on first card
     When User clicks on delete link
     Then Checklist is deleted
-		And User closes the card popup
