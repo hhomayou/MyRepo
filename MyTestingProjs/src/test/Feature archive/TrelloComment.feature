@@ -9,6 +9,15 @@ Feature: Trello Comment operations
     And Comment is added
     And User closes the card popup
 
+  Scenario: Edit a comment in the card
+    Given User clicks on first card
+    When User clicks on comment edit link 
+    Then User edits the comment and saves
+		And Comment is updated
+		And Revers the update
+    And User closes the card popup
+
+
   Scenario: Remove a comment from the card
     Given User clicks on first card
     When User clicks on comment delete link

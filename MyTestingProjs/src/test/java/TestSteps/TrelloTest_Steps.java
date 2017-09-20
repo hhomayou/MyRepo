@@ -21,7 +21,7 @@ public class TrelloTest_Steps extends Setup {
 	public static final String emailTest = "hhomayounfar@qaconsultants.com";
 	public static final String passwordTest = "pswdpswd";
 	
-	WebElement login, team, member;
+	WebElement login, team, member, comment;
 	List<WebElement> teams;
 	String boardName;
 	private static boolean dunit = false;	
@@ -54,16 +54,12 @@ public class TrelloTest_Steps extends Setup {
 	
 	// Login and display teams
 	
-	@Given("^User logs in to Trello main page$")
-	public void user_logs_in_to_Trello_main_page() throws Throwable {
-	}
-
-	@When("^List of teams and boards is displayed in the main page$")
+	@Given("^List of teams and boards is displayed in the main page$")
 	public void list_of_teams_and_boards_is_displayed_in_the_main_page() throws Throwable {
 		trelloElements.listTeams();		
 	}	
 
-	@Then("^User clicks on MyBoard box$")
+	@When("^User clicks on MyBoard box$")
 	public void user_clicks_on_MyBoard_box() throws Throwable { // and goes to MyBoard page
     	trelloElements.clickMyBoard();		
 	}
@@ -355,6 +351,38 @@ public class TrelloTest_Steps extends Setup {
 
     //@And("^User closes the card popup$")
     
+    // Edit comment
+
+    //@Given("^User clicks on first card$")
+    
+    @When("^User clicks on comment edit link$")
+    public void user_clicks_on_comment_edit_link() throws Throwable {
+    	comment = trelloElements.clickEditComment("Comment1");
+    }
+
+    @Then("^User edits the comment and saves$")
+    public void user_edits_the_comment_and_saves() throws Throwable {
+    	trelloElements.updateComment(comment, "Comment2");
+    }
+
+    @And("^Comment is updated$")
+    public void comment_is_updated() throws Throwable {
+    	if(trelloElements.getComment("Comment2") == null)
+    		throw new PendingException("Comment [Comment1] not updated to [Comment2] !");			   	
+     	System.out.println("Comment [Comment1] updated to [Comment2] in card [MyCard1]");
+    }
+
+    @And("^Revers the update$")
+    public void revers_the_update() throws Throwable {
+    	comment = trelloElements.clickEditComment("Comment2");
+    	trelloElements.updateComment(comment, "Comment1");
+    	if(trelloElements.getComment("Comment1") == null)
+    		throw new PendingException("Comment [Comment2] not reveresed to [Comment1] !");			   	
+     	System.out.println("Comment [Comment2] reversed to [Comment1] in card [MyCard1]");
+    }
+    
+    //@And("^User closes the card popup$")
+   
     // Remove comments
     
 	//@Given("^User clicks on first card$")
@@ -375,7 +403,7 @@ public class TrelloTest_Steps extends Setup {
    
     // Add a Due date
 
-    //@Then("^User clicks on duedate button$")
+    //@Given("^User clicks on duedate button$")
 
     @Then("^User sets the date and click on save button$")
     public void user_sets_the_date_and_click_on_save_button() throws Throwable {
