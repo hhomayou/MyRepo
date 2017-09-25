@@ -9,4 +9,4 @@ Feature: Trello displaying a board and its card
   Scenario: Click on a card to display info
     Given User clicks on first card
     When Card info is loaded and popped up
-    Then User closes the card popup
+    Then Go back to main page

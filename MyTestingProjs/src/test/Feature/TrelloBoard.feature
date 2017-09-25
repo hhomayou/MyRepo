@@ -13,4 +13,5 @@ Feature: Trello Board operations
     And Page displays the board is closed 
     And User clicks on Permanently Delete Board link and delete button
     And Board is deleted and page displays Board not found
+    And Go back to main page
     

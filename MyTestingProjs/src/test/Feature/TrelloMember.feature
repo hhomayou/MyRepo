@@ -15,4 +15,6 @@ Feature: Trello Member operations
     Then User clicks on the Member to toggle status
     And Member is added to the card
 		And Users closes the members popup
+		And Go back to main page
+		
     

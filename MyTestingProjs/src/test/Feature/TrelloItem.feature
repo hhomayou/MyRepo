@@ -17,3 +17,5 @@ Feature: Trello Checklist item operations
     When User clicks on the item
     Then Users clicks on Delete link
 		And Item is deleted
+    And Go back to main page
+		

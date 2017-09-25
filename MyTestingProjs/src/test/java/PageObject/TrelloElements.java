@@ -1,6 +1,7 @@
 package PageObject;
 
 import java.util.List;
+
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.Keys;
@@ -9,6 +10,7 @@ import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.How;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
+
 import cucumber.api.PendingException;
 
 public class TrelloElements {
@@ -31,8 +33,6 @@ public class TrelloElements {
 	List<WebElement> cards;
 	@FindBy(how = How.XPATH, xpath = "//div[@class='window']")
 	WebElement card; // Current card popped up 
-	@FindBy(how = How.XPATH, xpath = "//span[@class='header-btn-icon icon-lg icon-board-back-to-home light']")
-	WebElement backToMain;
 	@FindBy(how = How.XPATH, xpath = "//div[@class='boards-page-board-section u-clearfix']")
 	WebElement newTeamParent;
 	@FindBy(how = How.XPATH, xpath = "//input[@id='org-display-name']")	
@@ -94,7 +94,7 @@ public class TrelloElements {
 	@FindBy(how = How.XPATH, xpath = "//a[@class='pop-over-header-close-btn icon-sm icon-close']")
 	WebElement closeMemberButton;		
 	@FindBy(how = How.XPATH, xpath = "//textarea[@class='comment-box-input js-new-comment-input']")
-	WebElement commentTextarea;		
+	WebElement commentTextarea;	
 	@FindBy(how = How.XPATH, xpath = "//input[@class='primary confirm mod-no-top-bottom-margin js-add-comment']")
 	WebElement saveCommentButton;		
 	@FindBy(how = How.XPATH, xpath = "//input[@class='primary confirm js-save-edit']")
@@ -103,6 +103,24 @@ public class TrelloElements {
 	WebElement deleteCommentButton;		
 	@FindBy(how = How.XPATH, xpath = "//div[@class='phenom mod-comment-type' and ancestor::div[@class='window-overlay']]")
 	List<WebElement> comments;
+	@FindBy(how = How.XPATH, xpath = "//a[@class='button-link js-add-due-date']")
+	WebElement dueDateButton;		
+	@FindBy(how = How.XPATH, xpath = "//input[@class='datepicker-select-input js-dpicker-date-input js-autofocus']")
+	WebElement dueDateTextarea;		
+	@FindBy(how = How.XPATH, xpath = "//input[@class='primary wide confirm']")
+	WebElement dueDateSaveButton;		
+	@FindBy(how = How.XPATH, xpath = "//button[@class='negate remove-date js-remove-date']")
+	WebElement dueDateRemoveButton;		
+	@FindBy(how = How.XPATH, xpath = "//div[contains(@class,'card-detail-item js-card-detail-due-date')]")
+	WebElement dueDate;		
+	@FindBy(how = How.XPATH, xpath = "//div[contains(@class,'pop-over')]")
+	WebElement dueDatePopup;		
+	@FindBy(how = How.XPATH, xpath = "//a[@class='button-link js-edit-labels']")
+	WebElement labelsButton;
+	@FindBy(how = How.XPATH, xpath = "//span[starts-with(@class, 'card-label mod-selectable card-label-blue')]")
+	WebElement labelBlueButton;
+	@FindBy(how = How.XPATH, xpath = "//span[@class='header-btn-icon icon-lg icon-board-back-to-home light']")
+	List<WebElement> backToMainButtons;
 
 	// Email, password login [
 	public String getEmail() {
@@ -177,7 +195,7 @@ public class TrelloElements {
 	}
 	public void clickCloseBoard() throws InterruptedException {
 		wait.until(ExpectedConditions.elementToBeClickable(closeBoardLink)).click();
-		Thread.sleep(1000);
+		Thread.sleep(500);
 		wait.until(ExpectedConditions.elementToBeClickable(closeBoardButton)).click();
 	}
 	public String getBoardClosedMessage() {
@@ -192,6 +210,12 @@ public class TrelloElements {
 	}
 	public String getBoardDeletedMessage() {
 		return boardDeletedMessage.findElement(By.xpath(".//h1")).getAttribute("innerText");
+	}
+	public boolean goBackToMainIsActive() {
+		return backToMainButtons.size() == 1;
+	}
+	public void goBackToMain() {
+		wait.until(ExpectedConditions.elementToBeClickable(backToMainButtons.get(0))).click();		
 	}
 	// Board ]
 		
@@ -228,6 +252,10 @@ public class TrelloElements {
 		WebElement close = card.findElement(By.xpath(".//a[@class='icon-lg icon-close dialog-close-button js-close-window']"));
 		wait.until(ExpectedConditions.elementToBeClickable(close));
 		close.click();
+		System.out.println("Card popup closes now");
+	}
+	public boolean cardIsActvie() {
+		return card.getAttribute("style").equals("display: block;");
 	}
 	// Board Card ]
 
@@ -282,37 +310,64 @@ public class TrelloElements {
 	// Card checkList ]
 	
 	// Card comment [
+	public String commentXpath(String comment) {
+		return "//div[@class='phenom mod-comment-type' and descendant::p[text()='" + comment + "' and ancestor::div[@class='window-overlay']]]";
+	}
 	public void setComment(String comment) {
 		commentTextarea.sendKeys(Keys.chord(Keys.CONTROL, "a"), comment);
 	}
-	public WebElement getComment(String commentString) {
-		for(WebElement comment : comments)
-			if(comment.findElement(By.xpath(".//div[@class='current-comment js-friendly-links js-open-card']/p")).getAttribute("innerText").equals(commentString)) 
-					return comment;
-		return null;
+	public boolean commentExists(String comment) {
+		return Setup.driver.findElements(By.xpath(commentXpath(comment))).size() == 1;
 	}
+	
 	public void clickSaveComment() throws InterruptedException { // Save new comment
 		wait.until(ExpectedConditions.elementToBeClickable(saveCommentButton)).click();
-		Thread.sleep(500);		
 	}
-	public WebElement clickEditComment(String commentString) throws InterruptedException{
-		WebElement comment = getComment(commentString);
-		wait.until(ExpectedConditions.elementToBeClickable(comment.findElement(By.xpath(".//a[@class='js-edit-action']")))).click();
-		Thread.sleep(500);				
-		return comment;
+	public void clickEditComment(String comment) throws Exception{
+		Thread.sleep(1000);
+        Setup.waitTillClicable(commentXpath(comment) + "//a[@class='js-edit-action']");
 	}
-	public void updateComment(WebElement comment, String newComment) throws InterruptedException {
-		WebElement commentTextarea = comment.findElement(By.xpath(".//textarea[@class='comment-box-input js-text']"));
-		commentTextarea.sendKeys(Keys.chord(Keys.CONTROL, "a"), newComment);
-		wait.until(ExpectedConditions.elementToBeClickable(saveEditedCommentButton)).click();
-		Thread.sleep(500);
+	public void updateComment(String oldComment, String newComment) throws Exception {
+		Setup.waitTillSendable("//div[@class='phenom mod-comment-type is-editing' and descendant::p[text()='" + oldComment + "' and ancestor::div[@class='window-overlay']]]//textarea[@class='comment-box-input js-text']", newComment); // Enter update value
+		Setup.waitTillClicable("//input[@class='primary confirm js-save-edit']"); // Click on Save update
 	}
-	public void clickDeleteComment(String commentString) {
-		WebElement deleteCommentLink = getComment(commentString).findElement(By.xpath(".//a[@class='js-confirm-delete-action']"));
-		wait.until(ExpectedConditions.elementToBeClickable(deleteCommentLink)).click();
-		wait.until(ExpectedConditions.elementToBeClickable(deleteCommentButton)).click(); // Confirm
+	public void clickDeleteComment(String comment) throws Exception {
+		Setup.waitTillClicable(commentXpath(comment) + "//a[@class='js-confirm-delete-action']");
+		Setup.waitTillClicable("//input[@value='Delete Comment']");
 	}
 	// Card comment ]
+	
+	// Card due date [
+	public void duedateClick() {
+		wait.until(ExpectedConditions.elementToBeClickable(dueDateButton)).click();
+	}
+	public void dueDateSave(String date) throws InterruptedException {
+		dueDateTextarea.sendKeys(Keys.chord(Keys.CONTROL, "a"), date);
+		wait.until(ExpectedConditions.elementToBeClickable(dueDateSaveButton)).click(); // Parse the date in date picker
+		if(dueDatePopup.getAttribute("class").equals("pop-over is-shown")) // Due date pop-up still active
+			wait.until(ExpectedConditions.elementToBeClickable(dueDateSaveButton)).click(); // Save it
+	}
+	public void dueDateDelete() throws InterruptedException {
+		wait.until(ExpectedConditions.elementToBeClickable(dueDateRemoveButton)).click();
+	}
+	public String dueDateValue() {
+		if(dueDate.getAttribute("class").equals("card-detail-item js-card-detail-due-date hide")) return null;
+		return dueDate.findElement(By.xpath(".//span[@class='js-date-text card-detail-due-date-text js-details-edit-due-date']")).getText();
+	}
+	// Card due date ]
+	
+	// Card labels [
+	public void labelsClick() {
+		wait.until(ExpectedConditions.elementToBeClickable(labelsButton)).click();
+	}
+	public void labelBlueToggle() {
+		wait.until(ExpectedConditions.elementToBeClickable(labelBlueButton)).click();
+	}
+	public boolean labelBlueIsSelected() throws Exception {
+		return Setup.waitTillReady("//span[starts-with(@class, 'card-label mod-selectable card-label-blue')]").getAttribute("class").contains(" active ");
+		//return labelBlueButton.getAttribute("class").contains(" active ");
+	}
+	// Card labels ]
 	
 	// Checklist item [
 	public List<WebElement> getChecklistItems(WebElement checklist){

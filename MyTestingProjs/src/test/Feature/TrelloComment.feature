@@ -19,4 +19,5 @@ Feature: Trello Comment operations
     Given User clicks on first card
     When User clicks on comment delete link
     Then Comment is removed
+    And Go back to main page
     
