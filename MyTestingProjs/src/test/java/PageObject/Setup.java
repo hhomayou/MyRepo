@@ -124,7 +124,7 @@ public abstract class Setup {
 				Thread.sleep(1000);
 			} catch (NoSuchElementException e) {
 				retry = "retry";
-				System.out.print("2-Element not found yet...retrying....");
+				System.out.print("2-Element not found yet...retrying....\nxpath=" + xpathString + "<");
 				Thread.sleep(1000);
 			}
 		} while (true);

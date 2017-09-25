@@ -380,8 +380,8 @@ public class TrelloElements {
 		return checklist.findElements(By.xpath(".//div[@class='checklist-item checklist-item-state-complete']"));
 	}
 	public void addItem(WebElement checklist, String item) throws Exception {
-		Setup.waitTillClicable(checklistXpath("MyChecklist") + "//textarea[@placeholder='Add an item…']");
-		Setup.waitTillSendable(checklistXpath("MyChecklist") + "//textarea[@placeholder='Add an item…']", item);
+		Setup.waitTillClicable(checklistXpath("MyChecklist") + "//textarea[starts-with(@placeholder, 'Add an item')]");
+		Setup.waitTillSendable(checklistXpath("MyChecklist") + "//textarea[starts-with(@placeholder, 'Add an item')]", item);
 		//WebElement addItem = checklist.findElement(By.xpath(".//textarea[@placeholder='Add an item…']"));
 		//addItem.sendKeys(Keys.chord(Keys.CONTROL, "a"), item);
 		//addItem.click(); // Click 'Add an item' link
