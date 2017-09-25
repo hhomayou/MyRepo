@@ -281,6 +281,9 @@ public class TrelloElements {
 	// Card member ]
 
 	// Card checkList [
+	public String checklistXpath(String checklist){
+		return "//div[@class='checklist' and descendant::h3[@class='current hide-on-edit' and text()='" + checklist + "']]"; 
+	}
 	public List<WebElement> getChecklists() { // Checklist of the current card popped up
 		return checklists; 
 	}
@@ -376,10 +379,12 @@ public class TrelloElements {
 	public List<WebElement> getChecklistItemsCompleted(WebElement checklist){
 		return checklist.findElements(By.xpath(".//div[@class='checklist-item checklist-item-state-complete']"));
 	}
-	public void addItem(WebElement checklist, String item) {
-		WebElement addItem = checklist.findElement(By.xpath(".//textarea[@placeholder='Add an item…']"));
-		addItem.sendKeys(Keys.chord(Keys.CONTROL, "a"), item);
-		addItem.click(); // Click 'Add an item' link
+	public void addItem(WebElement checklist, String item) throws Exception {
+		Setup.waitTillClicable(checklistXpath("MyChecklist") + "//textarea[@placeholder='Add an item…']");
+		Setup.waitTillSendable(checklistXpath("MyChecklist") + "//textarea[@placeholder='Add an item…']", item);
+		//WebElement addItem = checklist.findElement(By.xpath(".//textarea[@placeholder='Add an item…']"));
+		//addItem.sendKeys(Keys.chord(Keys.CONTROL, "a"), item);
+		//addItem.click(); // Click 'Add an item' link
 		checklist.findElement(By.xpath(".//input[@value='Add']")).click(); // Click 'Add' button to confirm
 	}
 	public void cancelAddItem(WebElement item) {
