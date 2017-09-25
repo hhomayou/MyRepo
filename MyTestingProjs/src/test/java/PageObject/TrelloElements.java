@@ -375,7 +375,6 @@ public class TrelloElements {
 	}
 	public boolean labelBlueIsSelected() throws Exception {
 		return Setup.waitTillReady("//span[starts-with(@class, 'card-label mod-selectable card-label-blue')]").getAttribute("class").contains(" active ");
-		//return labelBlueButton.getAttribute("class").contains(" active ");
 	}
 	// Card labels ]
 	
@@ -389,9 +388,6 @@ public class TrelloElements {
 	public void addItem(WebElement checklist, String item) throws Exception {
 		Setup.waitTillClicable(checklistXpath("MyChecklist") + "//textarea[starts-with(@placeholder, 'Add an item')]");
 		Setup.waitTillSendable(checklistXpath("MyChecklist") + "//textarea[starts-with(@placeholder, 'Add an item')]", item);
-		//WebElement addItem = checklist.findElement(By.xpath(".//textarea[@placeholder='Add an item…']"));
-		//addItem.sendKeys(Keys.chord(Keys.CONTROL, "a"), item);
-		//addItem.click(); // Click 'Add an item' link
 		checklist.findElement(By.xpath(".//input[@value='Add']")).click(); // Click 'Add' button to confirm
 	}
 	public void cancelAddItem(WebElement item) {
