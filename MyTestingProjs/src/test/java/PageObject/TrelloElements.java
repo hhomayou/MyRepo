@@ -25,8 +25,8 @@ public class TrelloElements {
 	WebElement password;
 	@FindBy(how = How.XPATH, xpath = "//div[@class='boards-page-board-section mod-no-sidebar']")
 	List<WebElement> teams;
-	@FindBy(how = How.XPATH, xpath = "//span[@class='board-header-btn-text']")
-	WebElement boardTitle;
+	//@FindBy(how = How.XPATH, xpath = "//span[@class='board-header-btn-text']")
+	//WebElement boardTitle;
 	@FindBy(how = How.XPATH, xpath = "//div[@class='list-header js-list-header u-clearfix is-menu-shown']")
 	WebElement boardList;
 	@FindBy(how = How.XPATH, xpath = "//a[@class='list-card js-member-droppable ui-droppable']")
@@ -51,8 +51,8 @@ public class TrelloElements {
 	WebElement deleteTeamConfirm;
 	@FindBy(how = How.XPATH, xpath = "//input[@id='boardNewTitle']")
 	WebElement newBoardTitle;
-	@FindBy(how = How.XPATH, xpath = "//select[@name='org-id']")
-	List<WebElement> newBoardTeams;
+	//@FindBy(how = How.XPATH, xpath = "//select[@name='org-id']")
+	//List<WebElement> newBoardTeams;
 	@FindBy(how = How.XPATH, xpath = "//input[@value='Create']")
 	WebElement createBoard;
 	@FindBy(how = How.XPATH, xpath = "//div[@class='board-header u-clearfix js-board-header']")
@@ -69,8 +69,8 @@ public class TrelloElements {
 	WebElement deleteBoardLink;
 	@FindBy(how = How.XPATH, xpath = "//input[@value='Delete']")
 	WebElement deleteBoardButton;
-	@FindBy(how = How.XPATH, xpath = "//div[@class='big-message quiet']")
-	WebElement boardDeletedMessage;
+	//@FindBy(how = How.XPATH, xpath = "//div[@class='big-message quiet']")
+	//WebElement boardDeletedMessage;
 	@FindBy(how = How.XPATH, xpath = "//li[@class='boards-page-board-section-list-item' and .//span[@title='MyBoard']]")
 	WebElement myBoard;	
 	@FindBy(how = How.XPATH, xpath = "//a[@class='button-link js-add-checklist-menu']")
@@ -97,12 +97,12 @@ public class TrelloElements {
 	WebElement commentTextarea;	
 	@FindBy(how = How.XPATH, xpath = "//input[@class='primary confirm mod-no-top-bottom-margin js-add-comment']")
 	WebElement saveCommentButton;		
-	@FindBy(how = How.XPATH, xpath = "//input[@class='primary confirm js-save-edit']")
-	WebElement saveEditedCommentButton;		
-	@FindBy(how = How.XPATH, xpath = "//input[@value='Delete Comment']")
-	WebElement deleteCommentButton;		
-	@FindBy(how = How.XPATH, xpath = "//div[@class='phenom mod-comment-type' and ancestor::div[@class='window-overlay']]")
-	List<WebElement> comments;
+	//@FindBy(how = How.XPATH, xpath = "//input[@class='primary confirm js-save-edit']")
+	//WebElement saveEditedCommentButton;		
+	//@FindBy(how = How.XPATH, xpath = "//input[@value='Delete Comment']")
+	//WebElement deleteCommentButton;		
+	//@FindBy(how = How.XPATH, xpath = "//div[@class='phenom mod-comment-type' and ancestor::div[@class='window-overlay']]")
+	//List<WebElement> comments;
 	@FindBy(how = How.XPATH, xpath = "//a[@class='button-link js-add-due-date']")
 	WebElement dueDateButton;		
 	@FindBy(how = How.XPATH, xpath = "//input[@class='datepicker-select-input js-dpicker-date-input js-autofocus']")
@@ -208,8 +208,8 @@ public class TrelloElements {
 		wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//input[@value='Delete']")));
 		wait.until(ExpectedConditions.elementToBeClickable(deleteBoardButton)).click();
 	}
-	public String getBoardDeletedMessage() {
-		return boardDeletedMessage.findElement(By.xpath(".//h1")).getAttribute("innerText");
+	public String getBoardDeletedMessage() throws Exception {
+		return Setup.waitTillReady("//div[@class='big-message quiet']//h1").getAttribute("innerText"); 
 	}
 	public boolean goBackToMainIsActive() {
 		return backToMainButtons.size() == 1;
