@@ -65,7 +65,9 @@ public class TrelloTest_Steps extends Setup {
 
 	@When("^User clicks on MyBoard box$")
 	public void user_clicks_on_MyBoard_box() throws Throwable { // and goes to MyBoard page
+		System.out.print("Opening Myboard...");
 		trelloElements.clickMyBoard();
+		System.out.println("done");
 	}
 
 	@Then("^Page MyBoard is loaded and it displays all the info$")
@@ -133,6 +135,7 @@ public class TrelloTest_Steps extends Setup {
 	@Then("^User clicks delete this team$")
 	public void user_clicks_delete_this_team() throws Throwable {
 		trelloElements.clickDeleteTeam();
+		Thread.sleep(500);
 	}
 
 	@And("^User confirms and deletes the team$")
@@ -360,6 +363,7 @@ public class TrelloTest_Steps extends Setup {
 
 	@And("^Revers the update$")
 	public void revers_the_update() throws Throwable {
+		Thread.sleep(1000);
 		trelloElements.clickEditComment("Comment2");
 		trelloElements.updateComment("Comment2", "Comment1");
 		if (!trelloElements.commentExists("Comment1"))
@@ -371,11 +375,14 @@ public class TrelloTest_Steps extends Setup {
 
 	@When("^User clicks on comment delete link$")
 	public void user_clicks_on_comment_delete_link() throws Throwable {
+		System.out.print("Deleting Comment1...");
 		trelloElements.clickDeleteComment("Comment1");
+		System.out.print("done");
 	}
 
 	@Then("^Comment is removed$")
 	public void comment_is_removed() throws Throwable {
+		System.out.print("Check:... Comment1...");
 		if (trelloElements.commentExists("Comment1"))
 			throw new PendingException("Comment [Comment1] not removed !");
 		System.out.println("Comment [Comment1] removed from card [MyCard1]");

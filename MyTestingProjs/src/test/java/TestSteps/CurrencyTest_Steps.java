@@ -5,6 +5,7 @@ import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import PageObject.CurrencyElements;
 import PageObject.Setup;
+import automationFramework.TestUtilities;
 import cucumber.api.PendingException;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
@@ -39,12 +40,12 @@ public class CurrencyTest_Steps extends Setup {
 			double currencyWant = currencyElements.getCurrencyWantAmount();
 			double rateWant = currencyElements.getNoncashCurrencyWantRate();
 			System.out.print("A-Testing currencyHave[" + currencyHave + "] * rateHave[" + rateHave + "] ("
-					+ round(currencyHave * rateHave, 2) + ") == currencyWant[" + currencyWant + "]");
+					+ TestUtilities.round(currencyHave * rateHave, 2) + ") == currencyWant[" + currencyWant + "]");
 			if (Math.abs(currencyHave * rateHave - currencyWant) > 0.9)
 				throw new PendingException("currencyHave * rateHave <> currencyWant");
 			System.out.print(" Success\n");
 			System.out.print("B-Testing currencyWant[" + currencyWant + "] * rateWant[" + rateWant + "] ("
-					+ round(currencyWant * rateWant, 2) + ") == currencyHave[" + currencyHave + "]");
+					+ TestUtilities.round(currencyWant * rateWant, 2) + ") == currencyHave[" + currencyHave + "]");
 			if (Math.abs(currencyWant * rateWant - currencyHave) > 0.9)
 				throw new PendingException("currencyWant * rateWant <> currencyHave");
 			System.out.print(" Success\n");

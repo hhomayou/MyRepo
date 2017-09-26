@@ -13,6 +13,7 @@ import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import automationFramework.TestUtilities;
 import cucumber.api.PendingException;
 
 public class TrelloElements {
@@ -25,16 +26,14 @@ public class TrelloElements {
 	WebElement email;
 	@FindBy(how = How.XPATH, xpath = "//input[@type='password']")
 	WebElement password;
-	@FindBy(how = How.XPATH, xpath = "//div[@class='boards-page-board-section mod-no-sidebar']")
-	List<WebElement> teams;
-	//@FindBy(how = How.XPATH, xpath = "//span[@class='board-header-btn-text']")
-	//WebElement boardTitle;
+	String teamsXpath = "//div[@class='boards-page-board-section mod-no-sidebar']";
+	String myBoardXpath = "//li[@class='boards-page-board-section-list-item' and .//span[@title='MyBoard']]";
+	String boardNameXpath = "//span[@class='board-header-btn-text']";
 	@FindBy(how = How.XPATH, xpath = "//div[@class='list-header js-list-header u-clearfix is-menu-shown']")
 	WebElement boardList;
-	//@FindBy(how = How.XPATH, xpath = "//a[@class='list-card js-member-droppable ui-droppable']")
-	//List<WebElement> cards;
 	@FindBy(how = How.XPATH, xpath = "//div[@class='window']")
 	WebElement card; // Current card popped up 
+	String cardsXpath = "//a[@class='list-card js-member-droppable ui-droppable']";
 	@FindBy(how = How.XPATH, xpath = "//div[@class='boards-page-board-section u-clearfix']")
 	WebElement newTeamParent;
 	@FindBy(how = How.XPATH, xpath = "//input[@id='org-display-name']")	
@@ -47,14 +46,8 @@ public class TrelloElements {
 	WebElement newTeam;
 	@FindBy(how = How.XPATH, xpath = "//a[@data-tab='settings']")
 	WebElement teamSetting;
-	//@FindBy(how = How.XPATH, xpath = "//a[@class='quiet-button']/span")
-	//WebElement deleteTeam;
-	//@FindBy(how = How.XPATH, xpath = "//input[@value='Delete Forever']")
-	//WebElement deleteTeamConfirm;
 	@FindBy(how = How.XPATH, xpath = "//input[@id='boardNewTitle']")
 	WebElement newBoardTitle;
-	//@FindBy(how = How.XPATH, xpath = "//select[@name='org-id']")
-	//List<WebElement> newBoardTeams;
 	@FindBy(how = How.XPATH, xpath = "//input[@value='Create']")
 	WebElement createBoard;
 	@FindBy(how = How.XPATH, xpath = "//div[@class='board-header u-clearfix js-board-header']")
@@ -71,10 +64,6 @@ public class TrelloElements {
 	WebElement deleteBoardLink;
 	@FindBy(how = How.XPATH, xpath = "//input[@value='Delete']")
 	WebElement deleteBoardButton;
-	//@FindBy(how = How.XPATH, xpath = "//div[@class='big-message quiet']")
-	//WebElement boardDeletedMessage;
-	//@FindBy(how = How.XPATH, xpath = "//li[@class='boards-page-board-section-list-item' and .//span[@title='MyBoard']]")
-	//WebElement myBoard;	
 	@FindBy(how = How.XPATH, xpath = "//a[@class='button-link js-add-checklist-menu']")
 	WebElement checklistButton;
 	@FindBy(how = How.XPATH, xpath = "//input[@id='id-checklist']")
@@ -99,12 +88,6 @@ public class TrelloElements {
 	WebElement commentTextarea;	
 	@FindBy(how = How.XPATH, xpath = "//input[@class='primary confirm mod-no-top-bottom-margin js-add-comment']")
 	WebElement saveCommentButton;		
-	//@FindBy(how = How.XPATH, xpath = "//input[@class='primary confirm js-save-edit']")
-	//WebElement saveEditedCommentButton;		
-	//@FindBy(how = How.XPATH, xpath = "//input[@value='Delete Comment']")
-	//WebElement deleteCommentButton;		
-	//@FindBy(how = How.XPATH, xpath = "//div[@class='phenom mod-comment-type' and ancestor::div[@class='window-overlay']]")
-	//List<WebElement> comments;
 	@FindBy(how = How.XPATH, xpath = "//a[@class='button-link js-add-due-date']")
 	WebElement dueDateButton;		
 	@FindBy(how = How.XPATH, xpath = "//input[@class='datepicker-select-input js-dpicker-date-input js-autofocus']")
@@ -132,7 +115,7 @@ public class TrelloElements {
 		this.email.sendKeys(Keys.chord(Keys.CONTROL, "a"), email);
 	}
 	public void waitEmail(String value) {
-		Setup.waitTillValue(email, value);
+		TestUtilities.waitTillValue(email, value);
 	}
 
 	public String getPassword() {
@@ -142,30 +125,31 @@ public class TrelloElements {
 		this.password.sendKeys(Keys.chord(Keys.CONTROL, "a"), password);
 	}
 	public void waitPassword(String value) {
-		Setup.waitTillValue(password, value);
+		TestUtilities.waitTillValue(password, value);
 	}
 	
 	public WebElement getLogin() {
 		return login;
 	}
 	public void waitLoginDone() throws Exception {
-		Setup.waitTillReady(myBoardXpath());
+		TestUtilities.waitTillReady(myBoardXpath);
 	}
 	
 	// Team [
-	public List<WebElement> getTeams() {
-		return teams;
+	public List<WebElement> getTeams() throws Exception {
+		TestUtilities.waitTillReady(teamsXpath);
+		return Setup.driver.findElements(By.xpath(teamsXpath));
 	}
 	public WebElement getTeam(String teamName) throws Exception { // Get team from the list of teams
-		for(WebElement team : teams)
+		for(WebElement team : getTeams())
 			if(team.findElement(By.xpath(".//h3[@class='boards-page-board-section-header-name']")).getAttribute("innerText").equals(teamName))
 				return team;
 		throw new Exception("Team [" + teamName + "] was not found !");
 	}
 
-	public void listTeams() {
+	public void listTeams() throws Exception {
 		System.out.println("List of the teams:");
-		for(WebElement team : teams) {
+		for(WebElement team : getTeams()) {
 			System.out.print("Team: [" + team.findElement(By.xpath(".//h3[@class='boards-page-board-section-header-name']")).getAttribute("innerText") + "]");
 			System.out.println(", Board: [" + team.findElement(By.xpath(".//span[@class='board-tile-details-name']")).getAttribute("innerText") + "]");
 		}
@@ -173,12 +157,8 @@ public class TrelloElements {
 	// Team ]
 
 	// Board [
-	public String myBoardXpath() {
-		return "//li[@class='boards-page-board-section-list-item' and .//span[@title='MyBoard']]";
-	}
-	
 	public void clickMyBoard() throws Exception {
-		Setup.waitTillReady(myBoardXpath(), "click()"); // Wait till next page is loaded				
+		TestUtilities.waitTillReady(myBoardXpath, "click()"); // Wait till next page is loaded				
 	}
 	public void clickNewBoard(String teamName) throws Exception { // Click on 'Create New Board' of teamName 
 		wait.until(ExpectedConditions.elementToBeClickable(getTeam(teamName).findElement(By.xpath(".//a[@class='board-tile mod-add']")))).click();
@@ -186,9 +166,8 @@ public class TrelloElements {
 	public void setBoard(String title) throws Exception { // Set name for new board in Create Board box
 		newBoardTitle.sendKeys(Keys.chord(Keys.CONTROL, "a"), title);			
 	}
-	public String getBoardName() { // Get current board name
-		wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//span[@class='board-header-btn-text']"))); // Wait till page is loaded
-		return board.findElement(By.xpath(".//span[@class='board-header-btn-text']")).getAttribute("innerText");
+	public String getBoardName() throws Exception { // Get current board name		
+		return TestUtilities.waitTillReady(boardNameXpath).getAttribute("innerText");
 	}
 	public void clickCreateBoard() throws InterruptedException {
 		wait.until(ExpectedConditions.elementToBeClickable(createBoard));
@@ -214,7 +193,7 @@ public class TrelloElements {
 		wait.until(ExpectedConditions.elementToBeClickable(deleteBoardButton)).click();
 	}
 	public String getBoardDeletedMessage() throws Exception {
-		return ((WebElement)Setup.waitTillReady("//div[@class='big-message quiet']//h1")).getAttribute("innerText"); 
+		return ((WebElement)TestUtilities.waitTillReady("//div[@class='big-message quiet']//h1")).getAttribute("innerText"); 
 	}
 	public boolean goBackToMainIsActive() {
 		return backToMainButtons.size() == 1;
@@ -245,12 +224,13 @@ public class TrelloElements {
 
 	// Board card [
 	public List<WebElement> getCards() throws Exception { // Get cards of the current board
+		TestUtilities.waitTillReady(cardsXpath);
 		wait.until(new ExpectedCondition<Boolean>() {			
 			public Boolean apply(WebDriver driver) {
-				return boardList.findElements(By.xpath("//a[@class='list-card js-member-droppable ui-droppable']")).size() > 0;
+				return boardList.findElements(By.xpath(cardsXpath)).size() > 0;
 			}
 		});									
-		return boardList.findElements(By.xpath("//a[@class='list-card js-member-droppable ui-droppable']"));
+		return boardList.findElements(By.xpath(cardsXpath));
 	}
 	public WebElement getCard() {
 		return card;
@@ -337,16 +317,15 @@ public class TrelloElements {
 		wait.until(ExpectedConditions.elementToBeClickable(saveCommentButton)).click();
 	}
 	public void clickEditComment(String comment) throws Exception{
-		Thread.sleep(1000);
-        Setup.waitTillReady(commentXpath(comment) + "//a[@class='js-edit-action']", "click()");
+        TestUtilities.waitTillReady(commentXpath(comment) + "//a[@class='js-edit-action']", "click()");
 	}
 	public void updateComment(String oldComment, String newComment) throws Exception {
-		Setup.waitTillReady("//div[@class='phenom mod-comment-type is-editing' and descendant::p[text()='" + oldComment + "' and ancestor::div[@class='window-overlay']]]//textarea[@class='comment-box-input js-text']", newComment); // Enter update value
-		Setup.waitTillReady("//input[@class='primary confirm js-save-edit']", "click()"); // Click on Save update
+		TestUtilities.waitTillReady("//div[@class='phenom mod-comment-type is-editing' and descendant::p[text()='" + oldComment + "' and ancestor::div[@class='window-overlay']]]//textarea[@class='comment-box-input js-text']", newComment); // Enter update value
+		TestUtilities.waitTillReady("//input[@class='primary confirm js-save-edit']", "click()"); // Click on Save update
 	}
 	public void clickDeleteComment(String comment) throws Exception {
-		Setup.waitTillReady(commentXpath(comment) + "//a[@class='js-confirm-delete-action']", "click()");
-		Setup.waitTillReady("//input[@value='Delete Comment']", "click()");
+		TestUtilities.waitTillReady(commentXpath(comment) + "//a[@class='js-confirm-delete-action']", "click()");
+		TestUtilities.waitTillReady("//input[@value='Delete Comment']", "click()");
 	}
 	// Card comment ]
 	
@@ -377,7 +356,7 @@ public class TrelloElements {
 		wait.until(ExpectedConditions.elementToBeClickable(labelBlueButton)).click();
 	}
 	public boolean labelBlueIsSelected() throws Exception {
-		return ((WebElement) Setup.waitTillReady("//span[starts-with(@class, 'card-label mod-selectable card-label-blue')]")).getAttribute("class").contains(" active ");
+		return ((WebElement) TestUtilities.waitTillReady("//span[starts-with(@class, 'card-label mod-selectable card-label-blue')]")).getAttribute("class").contains(" active ");
 	}
 	// Card labels ]
 	
@@ -389,8 +368,8 @@ public class TrelloElements {
 		return checklist.findElements(By.xpath(".//div[@class='checklist-item checklist-item-state-complete']"));
 	}
 	public void addItem(WebElement checklist, String item) throws Exception {
-		Setup.waitTillReady(checklistXpath("MyChecklist") + "//textarea[starts-with(@placeholder, 'Add an item')]", "click()");
-		Setup.waitTillReady(checklistXpath("MyChecklist") + "//textarea[starts-with(@placeholder, 'Add an item')]", item);
+		TestUtilities.waitTillReady(checklistXpath("MyChecklist") + "//textarea[starts-with(@placeholder, 'Add an item')]", "click()");
+		TestUtilities.waitTillReady(checklistXpath("MyChecklist") + "//textarea[starts-with(@placeholder, 'Add an item')]", item);
 		checklist.findElement(By.xpath(".//input[@value='Add']")).click(); // Click 'Add' button to confirm
 	}
 	public void cancelAddItem(WebElement item) {
@@ -420,7 +399,7 @@ public class TrelloElements {
 		newTeam.click();
 	}
 	public void waitTeamName(String teamName) {
-		Setup.waitTillValue(newTeamName, teamName);
+		TestUtilities.waitTillValue(newTeamName, teamName);
 	}
 	public void setTeamName(String teamName) {
 		newTeamName.sendKeys(Keys.chord(Keys.CONTROL, "a"), teamName);
@@ -441,10 +420,10 @@ public class TrelloElements {
 		wait.until(ExpectedConditions.elementToBeClickable(teamSetting)).click();
 	}
 	public void clickDeleteTeam() throws Exception {		
-		Setup.waitTillReady("//a[@class='quiet-button']/span", "click()");
+		TestUtilities.waitTillReady("//a[@class='quiet-button']/span", "click()");
 	}
 	public void clickDeleteTeamConfirm() throws Exception {
-		Setup.waitTillReady("//input[@value='Delete Forever']", "click()");
+		TestUtilities.waitTillReady("//input[@value='Delete Forever']", "click()");
 	}
 	// Team ]
 }
