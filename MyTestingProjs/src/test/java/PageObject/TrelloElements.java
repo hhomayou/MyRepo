@@ -335,15 +335,15 @@ public class TrelloElements {
 	}
 	public void clickEditComment(String comment) throws Exception{
 		Thread.sleep(1000);
-        Setup.waitTillClicable(commentXpath(comment) + "//a[@class='js-edit-action']");
+        Setup.waitTillReady(commentXpath(comment) + "//a[@class='js-edit-action']", "click()");
 	}
 	public void updateComment(String oldComment, String newComment) throws Exception {
-		Setup.waitTillSendable("//div[@class='phenom mod-comment-type is-editing' and descendant::p[text()='" + oldComment + "' and ancestor::div[@class='window-overlay']]]//textarea[@class='comment-box-input js-text']", newComment); // Enter update value
-		Setup.waitTillClicable("//input[@class='primary confirm js-save-edit']"); // Click on Save update
+		Setup.waitTillReady("//div[@class='phenom mod-comment-type is-editing' and descendant::p[text()='" + oldComment + "' and ancestor::div[@class='window-overlay']]]//textarea[@class='comment-box-input js-text']", newComment); // Enter update value
+		Setup.waitTillReady("//input[@class='primary confirm js-save-edit']", "click()"); // Click on Save update
 	}
 	public void clickDeleteComment(String comment) throws Exception {
-		Setup.waitTillClicable(commentXpath(comment) + "//a[@class='js-confirm-delete-action']");
-		Setup.waitTillClicable("//input[@value='Delete Comment']");
+		Setup.waitTillReady(commentXpath(comment) + "//a[@class='js-confirm-delete-action']", "click()");
+		Setup.waitTillReady("//input[@value='Delete Comment']", "click()");
 	}
 	// Card comment ]
 	
@@ -386,8 +386,8 @@ public class TrelloElements {
 		return checklist.findElements(By.xpath(".//div[@class='checklist-item checklist-item-state-complete']"));
 	}
 	public void addItem(WebElement checklist, String item) throws Exception {
-		Setup.waitTillClicable(checklistXpath("MyChecklist") + "//textarea[starts-with(@placeholder, 'Add an item')]");
-		Setup.waitTillSendable(checklistXpath("MyChecklist") + "//textarea[starts-with(@placeholder, 'Add an item')]", item);
+		Setup.waitTillReady(checklistXpath("MyChecklist") + "//textarea[starts-with(@placeholder, 'Add an item')]", "click()");
+		Setup.waitTillReady(checklistXpath("MyChecklist") + "//textarea[starts-with(@placeholder, 'Add an item')]", item);
 		checklist.findElement(By.xpath(".//input[@value='Add']")).click(); // Click 'Add' button to confirm
 	}
 	public void cancelAddItem(WebElement item) {
@@ -438,10 +438,10 @@ public class TrelloElements {
 		wait.until(ExpectedConditions.elementToBeClickable(teamSetting)).click();
 	}
 	public void clickDeleteTeam() throws Exception {		
-		Setup.waitTillClicable("//a[@class='quiet-button']/span");
+		Setup.waitTillReady("//a[@class='quiet-button']/span", "click()");
 	}
 	public void clickDeleteTeamConfirm() throws Exception {
-		Setup.waitTillClicable("//input[@value='Delete Forever']");
+		Setup.waitTillReady("//input[@value='Delete Forever']", "click()");
 	}
 	// Team ]
 }

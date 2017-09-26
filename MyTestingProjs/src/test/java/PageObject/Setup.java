@@ -84,10 +84,12 @@ public abstract class Setup {
 			try {
 				element = Setup.driver.findElement(By.xpath(xpathString));
 				element.getText();
-				// if(newValue != null)
-				// element.sendKeys(Keys.chord(Keys.CONTROL, "a"), newValue);
-				// if(newValue != null && newValue.equals("click()"))
-				// wait.until(ExpectedConditions.elementToBeClickable(element)).click();
+				if(newValue != null) {
+					if(newValue.equals("click()"))
+						wait.until(ExpectedConditions.elementToBeClickable(element)).click();
+					else 
+						element.sendKeys(Keys.chord(Keys.CONTROL, "a"), newValue);
+				}
 				if (retry != "")
 					System.out.println("Success");
 				return element; // It's ready
@@ -98,60 +100,6 @@ public abstract class Setup {
 			} catch (NoSuchElementException e) {
 				retry = "retry";
 				System.out.print("Element not found yet...retrying....");
-				Thread.sleep(1000);
-			}
-		} while (true);
-	}
-
-	public static WebElement waitTillClicable(String xpathString) throws Exception {
-		long startTime = System.currentTimeMillis();
-		WebElement element = null;
-		String retry = "";
-		do {
-			if (System.currentTimeMillis() - startTime > 6000) {
-				System.out.println("Failed !");
-				throw new Exception("2-Timeout: element is not ready !");
-			}
-			try {
-				element = Setup.driver.findElement(By.xpath(xpathString));
-				wait.until(ExpectedConditions.elementToBeClickable(element)).click();
-				if (retry != "")
-					System.out.println("Success");
-				return element; // It's ready
-			} catch (StaleElementReferenceException e) {
-				retry = "retry";
-				System.out.print("2-Element not ready...retrying....");
-				Thread.sleep(1000);
-			} catch (NoSuchElementException e) {
-				retry = "retry";
-				System.out.print("2-Element not found yet...retrying....\nxpath=" + xpathString + "<");
-				Thread.sleep(1000);
-			}
-		} while (true);
-	}
-
-	public static WebElement waitTillSendable(String xpathString, String newValue) throws Exception {
-		long startTime = System.currentTimeMillis();
-		WebElement element = null;
-		String retry = "";
-		do {
-			if (System.currentTimeMillis() - startTime > 6000) {
-				System.out.println("Failed !");
-				throw new Exception("3-Timeout: element is not ready !");
-			}
-			try {
-				element = Setup.driver.findElement(By.xpath(xpathString));
-				element.sendKeys(Keys.chord(Keys.CONTROL, "a"), newValue);
-				if (retry != "")
-					System.out.println("Success");
-				return element; // It's ready
-			} catch (StaleElementReferenceException e) {
-				retry = "retry";
-				System.out.print("3-Element not ready...retrying....");
-				Thread.sleep(1000);
-			} catch (NoSuchElementException e) {
-				retry = "retry";
-				System.out.print("3-Element not found yet...retrying....");
 				Thread.sleep(1000);
 			}
 		} while (true);
