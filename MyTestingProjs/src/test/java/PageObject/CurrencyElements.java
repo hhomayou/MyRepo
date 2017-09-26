@@ -11,6 +11,7 @@ import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import automationFramework.TestUtilities;
 import java.util.regex.*;
 
 public class CurrencyElements {
@@ -75,7 +76,7 @@ public class CurrencyElements {
 		wait.until(ExpectedConditions.elementToBeClickable(unit)).click();
 	}
 	public void waitCurrencyHaveUnit(String value) {
-		Setup.waitTillValue(currencyHaveUnitsRO, value);
+		TestUtilities.waitTillValue(currencyHaveUnitsRO, value);
 	}
 	
 
@@ -102,7 +103,7 @@ public class CurrencyElements {
 		this.currencyWantAmount.sendKeys(Keys.chord(Keys.CONTROL, "a"), String.valueOf(currencyWantAmount));
 	}
 	public void waitNotCurrencyWantAmount(double value) {
-		Setup.waitTillValueNot(currencyWantAmount, String.valueOf(value));
+		TestUtilities.waitTillValueNot(currencyWantAmount, String.valueOf(value));
 	}
 
 	public double getNoncashCurrencyWantRate() {
