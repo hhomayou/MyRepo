@@ -31,8 +31,8 @@ public class TrelloElements {
 	//WebElement boardTitle;
 	@FindBy(how = How.XPATH, xpath = "//div[@class='list-header js-list-header u-clearfix is-menu-shown']")
 	WebElement boardList;
-	@FindBy(how = How.XPATH, xpath = "//a[@class='list-card js-member-droppable ui-droppable']")
-	List<WebElement> cards;
+	//@FindBy(how = How.XPATH, xpath = "//a[@class='list-card js-member-droppable ui-droppable']")
+	//List<WebElement> cards;
 	@FindBy(how = How.XPATH, xpath = "//div[@class='window']")
 	WebElement card; // Current card popped up 
 	@FindBy(how = How.XPATH, xpath = "//div[@class='boards-page-board-section u-clearfix']")
@@ -73,8 +73,8 @@ public class TrelloElements {
 	WebElement deleteBoardButton;
 	//@FindBy(how = How.XPATH, xpath = "//div[@class='big-message quiet']")
 	//WebElement boardDeletedMessage;
-	@FindBy(how = How.XPATH, xpath = "//li[@class='boards-page-board-section-list-item' and .//span[@title='MyBoard']]")
-	WebElement myBoard;	
+	//@FindBy(how = How.XPATH, xpath = "//li[@class='boards-page-board-section-list-item' and .//span[@title='MyBoard']]")
+	//WebElement myBoard;	
 	@FindBy(how = How.XPATH, xpath = "//a[@class='button-link js-add-checklist-menu']")
 	WebElement checklistButton;
 	@FindBy(how = How.XPATH, xpath = "//input[@id='id-checklist']")
@@ -148,8 +148,8 @@ public class TrelloElements {
 	public WebElement getLogin() {
 		return login;
 	}
-	public void waitLoginDone() {
-		wait.until(ExpectedConditions.presenceOfElementLocated(By.className(myBoard.getAttribute("class")))); // Wait till next page is loaded
+	public void waitLoginDone() throws Exception {
+		Setup.waitTillReady(myBoardXpath());
 	}
 	
 	// Team [
@@ -173,9 +173,12 @@ public class TrelloElements {
 	// Team ]
 
 	// Board [
+	public String myBoardXpath() {
+		return "//li[@class='boards-page-board-section-list-item' and .//span[@title='MyBoard']]";
+	}
+	
 	public void clickMyBoard() throws Exception {
-		wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//li[@class='boards-page-board-section-list-item']"))); // Wait till next page is loaded				
-		wait.until(ExpectedConditions.elementToBeClickable(myBoard)).click();		
+		Setup.waitTillReady(myBoardXpath(), "click()"); // Wait till next page is loaded				
 	}
 	public void clickNewBoard(String teamName) throws Exception { // Click on 'Create New Board' of teamName 
 		wait.until(ExpectedConditions.elementToBeClickable(getTeam(teamName).findElement(By.xpath(".//a[@class='board-tile mod-add']")))).click();
@@ -211,7 +214,7 @@ public class TrelloElements {
 		wait.until(ExpectedConditions.elementToBeClickable(deleteBoardButton)).click();
 	}
 	public String getBoardDeletedMessage() throws Exception {
-		return Setup.waitTillReady("//div[@class='big-message quiet']//h1").getAttribute("innerText"); 
+		return ((WebElement)Setup.waitTillReady("//div[@class='big-message quiet']//h1")).getAttribute("innerText"); 
 	}
 	public boolean goBackToMainIsActive() {
 		return backToMainButtons.size() == 1;
@@ -228,8 +231,8 @@ public class TrelloElements {
 	public String getBoardListCardTot() {
 		return boardList.findElement(By.xpath("//p[@class='list-header-num-cards hide js-num-cards']")).getAttribute("innerText");
 	}
-	public void displayBoardListInfo() {
-		for(WebElement card: getCards()) {
+	public void displayBoardListInfo() throws Exception {
+		for(WebElement card: ((List <WebElement>)getCards())) {
 			System.out.print("Card: " + card.findElement(By.xpath(".//span[@class='list-card-title js-card-name']")).getAttribute("innerText"));
 			System.out.print(", Items: " + card.findElement(By.xpath(".//span[@class='badge-text']")).getAttribute("innerText"));			
 			System.out.print(", assigned to: ");
@@ -241,8 +244,8 @@ public class TrelloElements {
 	// Board List ]
 
 	// Board card [
-	public List<WebElement> getCards() { // Get cards of the current board
-		wait.until(new ExpectedCondition<Boolean>() {
+	public List<WebElement> getCards() throws Exception { // Get cards of the current board
+		wait.until(new ExpectedCondition<Boolean>() {			
 			public Boolean apply(WebDriver driver) {
 				return boardList.findElements(By.xpath("//a[@class='list-card js-member-droppable ui-droppable']")).size() > 0;
 			}
@@ -374,7 +377,7 @@ public class TrelloElements {
 		wait.until(ExpectedConditions.elementToBeClickable(labelBlueButton)).click();
 	}
 	public boolean labelBlueIsSelected() throws Exception {
-		return Setup.waitTillReady("//span[starts-with(@class, 'card-label mod-selectable card-label-blue')]").getAttribute("class").contains(" active ");
+		return ((WebElement) Setup.waitTillReady("//span[starts-with(@class, 'card-label mod-selectable card-label-blue')]")).getAttribute("class").contains(" active ");
 	}
 	// Card labels ]
 	

@@ -36,9 +36,9 @@ public abstract class Setup {
 	public static WebDriver beforeClassMethod(String pageURI) throws IOException, ClassNotFoundException, SQLException {
 		System.setProperty("webdriver.chrome.driver", "Resources/chromedriver.exe");
 		driver = new ChromeDriver();
-		driver.manage().timeouts().implicitlyWait(4, TimeUnit.SECONDS);
+		driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
 		driver.get(pageURI);
-		wait = new WebDriverWait(driver, 4);
+		wait = new WebDriverWait(driver, 10);
 		System.out.println("Page: " + driver.getTitle());
 		return driver;
 	}
@@ -77,7 +77,7 @@ public abstract class Setup {
 		WebElement element = null;
 		String retry = "";
 		do {
-			if (System.currentTimeMillis() - startTime > 6000) {
+			if (System.currentTimeMillis() - startTime > 10000) {
 				System.out.println("Failed !");
 				throw new Exception("Timeout: element is not ready !");
 			}
