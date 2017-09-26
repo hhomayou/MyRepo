@@ -47,10 +47,10 @@ public class TrelloElements {
 	WebElement newTeam;
 	@FindBy(how = How.XPATH, xpath = "//a[@data-tab='settings']")
 	WebElement teamSetting;
-	@FindBy(how = How.XPATH, xpath = "//a[@class='quiet-button']/span")
-	WebElement deleteTeam;
-	@FindBy(how = How.XPATH, xpath = "//input[@value='Delete Forever']")
-	WebElement deleteTeamConfirm;
+	//@FindBy(how = How.XPATH, xpath = "//a[@class='quiet-button']/span")
+	//WebElement deleteTeam;
+	//@FindBy(how = How.XPATH, xpath = "//input[@value='Delete Forever']")
+	//WebElement deleteTeamConfirm;
 	@FindBy(how = How.XPATH, xpath = "//input[@id='boardNewTitle']")
 	WebElement newBoardTitle;
 	//@FindBy(how = How.XPATH, xpath = "//select[@name='org-id']")
@@ -437,15 +437,11 @@ public class TrelloElements {
 	public void clickTeamSetting() throws Exception {
 		wait.until(ExpectedConditions.elementToBeClickable(teamSetting)).click();
 	}
-	public void clickDeleteTeam() throws InterruptedException {
-		wait.until(ExpectedConditions.elementToBeClickable(deleteTeam));
-		Thread.sleep(500);
-		deleteTeam.click();
+	public void clickDeleteTeam() throws Exception {		
+		Setup.waitTillClicable("//a[@class='quiet-button']/span");
 	}
-	public void clickDeleteTeamConfirm() throws InterruptedException {
-		wait.until(ExpectedConditions.elementToBeClickable(deleteTeamConfirm));
-		Thread.sleep(500);
-		deleteTeamConfirm.click();
+	public void clickDeleteTeamConfirm() throws Exception {
+		Setup.waitTillClicable("//input[@value='Delete Forever']");
 	}
 	// Team ]
 }

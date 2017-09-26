@@ -9,7 +9,7 @@ Feature: Trello Board operations
   Scenario: Delete the board
     Given User is in the board page
     When User clicks on more link
-    Then User clicks Close Board link and Close button
+    Then User clicks close board link and close button
     And Page displays the board is closed 
     And User clicks on Permanently Delete Board link and delete button
     And Board is deleted and page displays Board not found

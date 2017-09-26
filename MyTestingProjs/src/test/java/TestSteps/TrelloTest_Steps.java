@@ -101,7 +101,7 @@ public class TrelloTest_Steps extends Setup {
 	public void user_clicks_on_create_new_team_link() throws Throwable {
 		trelloElements.clickNewteam();
 	}
-	@When("^User enters Name and Description$")
+	@When("^User enters name and description$")
 	public void user_enters_Name_and_Description() throws Throwable {
 		trelloElements.setTeamName("Team1");
 		trelloElements.waitTeamName("Team1");
@@ -115,20 +115,20 @@ public class TrelloTest_Steps extends Setup {
 	
 	// Delete a team
 	
-	@Given("^User is in the Team page$")
+	@Given("^User is in the team page$")
 	public void user_is_in_the_team_page() throws Throwable {
 		team = trelloElements.getNewTeam(); // Get the new team
 	}
-	@When("^User selects Setting tab$")
+	@When("^User selects setting tab$")
 	public void user_selects_setting_tab() throws Throwable {
 		trelloElements.clickTeamSetting();
 	}
-	@Then("^Click Delete this team$")
-	public void click_delete_this_team() throws Throwable {
+	@Then("^User clicks delete this team$")
+	public void user_clicks_delete_this_team() throws Throwable {
 		trelloElements.clickDeleteTeam();
 	}
-	@And("^Confirm and delete the team$")
-	public void confirm_and_delete_the_team() throws Throwable {
+	@And("^User confirms and deletes the team$")
+	public void user_confirms_and_deletes_the_team() throws Throwable {
 		trelloElements.clickDeleteTeamConfirm();
 		System.out.println("Team [" + team.getText() + "] deleted successfully");
 	}
@@ -159,7 +159,7 @@ public class TrelloTest_Steps extends Setup {
 	public void user_clicks_on_more_link() throws Throwable {
 		trelloElements.clickMore();
 	}
-	@Then("^User clicks Close Board link and Close button$")
+	@Then("^User clicks close board link and close button$")
 	public void user_clicks_close_board_link_and_close_button() throws Throwable {
 		trelloElements.clickCloseBoard();
 	}
