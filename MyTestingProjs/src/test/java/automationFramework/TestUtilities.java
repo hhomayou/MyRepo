@@ -11,7 +11,6 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -24,7 +23,7 @@ import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 
 import PageObject.Setup;
-import TestSteps.CurrencyExchange;
+import TestObjects.CurrencyExchange;
 
 public class TestUtilities {
 	//
@@ -90,7 +89,7 @@ public class TestUtilities {
 				return element; // It's ready
 			} catch (Exception e) {
 				exception = e;
-				System.out.print("[" + e.getMessage() + "]...retrying....");
+				System.out.print("[" + e.getMessage() + "]...retrying....\n\npagesource=" + Setup.driver.getPageSource());
 				Thread.sleep(1000);
 			}
 		} while (true);

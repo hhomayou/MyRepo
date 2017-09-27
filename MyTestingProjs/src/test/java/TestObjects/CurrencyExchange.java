@@ -1,4 +1,4 @@
-package TestSteps;
+package TestObjects;
 
 public class CurrencyExchange {
 

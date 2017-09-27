@@ -64,7 +64,7 @@ public class TrelloTest_Steps extends Setup {
 	}
 
 	@When("^User clicks on MyBoard box$")
-	public void user_clicks_on_MyBoard_box() throws Throwable { // and goes to MyBoard page
+	public void user_clicks_on_myBoard_box() throws Throwable { // and goes to MyBoard page
 		System.out.print("Opening Myboard...");
 		trelloElements.clickMyBoard();
 		System.out.println("done");

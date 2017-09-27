@@ -5,7 +5,7 @@ Feature: Trello Board operations
     Given User clicks on create new board box
     When User enters Title and selects first Team
     Then The new board is created
-
+    
   Scenario: Delete the board
     Given User is in the board page
     When User clicks on more link
@@ -14,4 +14,3 @@ Feature: Trello Board operations
     And User clicks on Permanently Delete Board link and delete button
     And Board is deleted and page displays Board not found
     And Go back to main page
-    

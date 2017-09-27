@@ -6,7 +6,7 @@ import cucumber.api.junit.Cucumber;
 
 @RunWith(Cucumber.class)
 @CucumberOptions(
-	features = "src/test/Feature",
+	features = "src/test/Feature/TrelloLogin.feature",
 	plugin = {"pretty", "html:target/cucumber"},	
 	glue = "TestSteps"	
 )

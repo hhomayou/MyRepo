@@ -5,6 +5,7 @@ import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import PageObject.CurrencyElements;
 import PageObject.Setup;
+import TestObjects.CurrencyExchange;
 import automationFramework.TestUtilities;
 import cucumber.api.PendingException;
 import cucumber.api.java.en.Given;
