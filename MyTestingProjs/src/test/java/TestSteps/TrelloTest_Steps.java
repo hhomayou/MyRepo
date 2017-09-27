@@ -195,6 +195,7 @@ public class TrelloTest_Steps extends Setup {
 	public void board_is_deleted_and_page_displays_Board_not_found() throws Throwable {
 		trelloElements.getBoardDeletedMessage();
 		System.out.println("Board [" + boardName + "] was deleted successfully");
+		Thread.sleep(1000);
 	}
 
 	@And("^Go back to main page$")
