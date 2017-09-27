@@ -89,7 +89,7 @@ public class TestUtilities {
 				return element; // It's ready
 			} catch (Exception e) {
 				exception = e;
-				System.out.print("[" + e.getMessage() + "]...retrying....\n\npagesource=" + Setup.driver.getPageSource());
+				System.out.print("[" + e.getMessage() + "] Retrying...");
 				Thread.sleep(1000);
 			}
 		} while (true);

@@ -26,7 +26,9 @@ public class TrelloElements {
 	WebElement email;
 	@FindBy(how = How.XPATH, xpath = "//input[@type='password']")
 	WebElement password;
-	String teamsXpath = "//div[@class='boards-page-board-section mod-no-sidebar']";
+	//String teamsXpath = "//div[@class='boards-page-board-section mod-no-sidebar']";
+	String myTeamXpath = "//div[@class='boards-page-board-section mod-no-sidebar' and descendant::h3[text()='MyTeam']]";
+	String team1Xpath = "//div[@class='boards-page-board-section mod-no-sidebar' and descendant::h3[text()='team1']]";
 	String myBoardXpath = "//li[@class='boards-page-board-section-list-item' and .//span[@title='MyBoard']]";
 	String boardNameXpath = "//span[@class='board-header-btn-text']";
 	@FindBy(how = How.XPATH, xpath = "//div[@class='list-header js-list-header u-clearfix is-menu-shown']")
@@ -136,23 +138,12 @@ public class TrelloElements {
 	}
 	
 	// Team [
-	public List<WebElement> getTeams() throws Exception {
-		TestUtilities.waitTillReady(teamsXpath);
-		return Setup.driver.findElements(By.xpath(teamsXpath));
-	}
-	public WebElement getTeam(String teamName) throws Exception { // Get team from the list of teams
-		for(WebElement team : getTeams())
-			if(team.findElement(By.xpath(".//h3[@class='boards-page-board-section-header-name']")).getAttribute("innerText").equals(teamName))
-				return team;
-		throw new Exception("Team [" + teamName + "] was not found !");
-	}
-
 	public void listTeams() throws Exception {
-		System.out.println("List of the teams:");
-		for(WebElement team : getTeams()) {
-			System.out.print("Team: [" + team.findElement(By.xpath(".//h3[@class='boards-page-board-section-header-name']")).getAttribute("innerText") + "]");
-			System.out.println(", Board: [" + team.findElement(By.xpath(".//span[@class='board-tile-details-name']")).getAttribute("innerText") + "]");
-		}
+		System.out.print("Team: [" +TestUtilities.waitTillReady(myTeamXpath).getAttribute("innerText") + "]");
+		System.out.println(", Board: [" + TestUtilities.waitTillReady(myBoardXpath).getAttribute("innerText") + "]");
+	}
+	public boolean teamExists() {
+		return Setup.driver.findElements(By.xpath(team1Xpath)).size() == 1;
 	}
 	// Team ]
 
@@ -160,8 +151,8 @@ public class TrelloElements {
 	public void clickMyBoard() throws Exception {
 		TestUtilities.waitTillReady(myBoardXpath, "click()"); // Wait till next page is loaded				
 	}
-	public void clickNewBoard(String teamName) throws Exception { // Click on 'Create New Board' of teamName 
-		wait.until(ExpectedConditions.elementToBeClickable(getTeam(teamName).findElement(By.xpath(".//a[@class='board-tile mod-add']")))).click();
+	public void clickNewBoard() throws Exception { // Click on 'Create New Board' of teamName 
+		TestUtilities.waitTillReady("//span[text()='Create new board…' and ancestor::div//h3[text()='MyTeam']]", "click()");
 	}
 	public void setBoard(String title) throws Exception { // Set name for new board in Create Board box
 		newBoardTitle.sendKeys(Keys.chord(Keys.CONTROL, "a"), title);			
@@ -321,6 +312,7 @@ public class TrelloElements {
 	}
 	public void updateComment(String oldComment, String newComment) throws Exception {
 		TestUtilities.waitTillReady("//div[@class='phenom mod-comment-type is-editing' and descendant::p[text()='" + oldComment + "' and ancestor::div[@class='window-overlay']]]//textarea[@class='comment-box-input js-text']", newComment); // Enter update value
+		Thread.sleep(500);
 		TestUtilities.waitTillReady("//input[@class='primary confirm js-save-edit']", "click()"); // Click on Save update
 	}
 	public void clickDeleteComment(String comment) throws Exception {
@@ -420,7 +412,9 @@ public class TrelloElements {
 		wait.until(ExpectedConditions.elementToBeClickable(teamSetting)).click();
 	}
 	public void clickDeleteTeam() throws Exception {		
+		Thread.sleep(500);
 		TestUtilities.waitTillReady("//a[@class='quiet-button']/span", "click()");
+		Thread.sleep(500);
 	}
 	public void clickDeleteTeamConfirm() throws Exception {
 		TestUtilities.waitTillReady("//input[@value='Delete Forever']", "click()");
