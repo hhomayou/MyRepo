@@ -152,7 +152,7 @@ public class TrelloElements {
 		TestUtilities.waitTillReady(myBoardXpath, "click()"); // Wait till next page is loaded				
 	}
 	public void clickNewBoard() throws Exception { // Click on 'Create New Board' of teamName 
-		TestUtilities.waitTillReady("//span[text()='Create new board…' and ancestor::div//h3[text()='MyTeam']]", "click()");
+		TestUtilities.waitTillReady("//span[contains(text(),'Create new board') and ancestor::div//h3[text()='MyTeam']]", "click()");
 	}
 	public void setBoard(String title) throws Exception { // Set name for new board in Create Board box
 		newBoardTitle.sendKeys(Keys.chord(Keys.CONTROL, "a"), title);			
