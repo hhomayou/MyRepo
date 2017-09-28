@@ -366,9 +366,10 @@ public class TrelloTest_Steps extends Setup {
 
 	@And("^Revers the update$")
 	public void revers_the_update() throws Throwable {
-		Thread.sleep(500);
+		System.out.println("Reversing [Comment2] to [Comment1]...");
+		Thread.sleep(1000);
 		trelloElements.clickEditComment("Comment2");
-		Thread.sleep(500);
+		Thread.sleep(1000);
 		trelloElements.updateComment("Comment2", "Comment1");
 		if (!trelloElements.commentExists("Comment1"))
 			throw new PendingException("Comment [Comment2] not reveresed to [Comment1] !");

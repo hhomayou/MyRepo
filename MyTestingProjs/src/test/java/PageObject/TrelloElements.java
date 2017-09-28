@@ -312,7 +312,7 @@ public class TrelloElements {
 	}
 	public void updateComment(String oldComment, String newComment) throws Exception {
 		TestUtilities.waitTillReady("//div[@class='phenom mod-comment-type is-editing' and descendant::p[text()='" + oldComment + "' and ancestor::div[@class='window-overlay']]]//textarea[@class='comment-box-input js-text']", newComment); // Enter update value
-		Thread.sleep(500);
+		Thread.sleep(1000);
 		TestUtilities.waitTillReady("//input[@class='primary confirm js-save-edit']", "click()"); // Click on Save update
 	}
 	public void clickDeleteComment(String comment) throws Exception {
